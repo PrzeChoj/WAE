@@ -22,3 +22,15 @@ goal_function_maker <- function(p, n, sigma=NULL){
   my_goal_function
 }
 
+
+#' Draw a random permutation; Drawing a random transosition is in gips:::runif_transposition
+runif_perm <- function(perm_size){
+  permutations::as.cycle(permutations::as.word(sample(perm_size, perm_size,
+                                                      replace=FALSE)))
+}
+
+
+
+
+
+
