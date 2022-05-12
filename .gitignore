@@ -19,6 +19,7 @@
 
 # RStudio files
 .Rproj.user/
+WAE.Rproj
 
 # produced vignettes
 vignettes/*.html
