@@ -46,7 +46,7 @@ runif_perm <- function(perm_size){
 
 #' Drawing a random transosition
 runif_transposition <- function(perm_size){
-  permutations::as.cycle(sample(perm_size, perm_size, replace=FALSE))
+  permutations::as.cycle(sample(perm_size, 2, replace=FALSE))
 }
 
 

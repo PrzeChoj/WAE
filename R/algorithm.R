@@ -9,8 +9,9 @@ source("R/utils.R")
 #' out[["best_f_value"]]
 #' out[["best_permutation"]]
 #' out <- evolutional_optimization(U, n_number, max_iter=100, pop_size=3, a=1)
-evolutional_optimization <- function(U, n_number, max_iter=100, pop_size=100,
-                                     success_treshold=0.2, a=0.817,
+evolutional_optimization <- function(U, n_number, max_iter=100, pop_size=3,
+                                     success_treshold=0.2, p_0=0.5,
+                                     a=0.817, k_max=1,
                                      tournament_size=2,
                                      delta=3, D_matrix=NULL,
                                      show_progress_bar=TRUE){
@@ -23,6 +24,8 @@ evolutional_optimization <- function(U, n_number, max_iter=100, pop_size=100,
   if(is.null(D_matrix)){
     D_matrix <- diag(nrow = perm_size)
   }
+  
+  p_t <- p_0
   
   my_goal_function <- function(perm){
     gips::goal_function(perm, perm_size, n_number, U,
@@ -49,16 +52,46 @@ evolutional_optimization <- function(U, n_number, max_iter=100, pop_size=100,
     if(show_progress_bar)
       utils::setTxtProgressBar(progressBar, iteration)
     
-    # TODO(Teraz dałem szukanie monte carlo)
-    population <- list()
+    # TODO(iteracja)
+    
+    # TODO(Reprodukcja)
+    reproduced <- population
+    reproduced_f_value <- f_values
+    # end of TODO
+    
+    # mutation
+    mutants <- list()
+    mutants_f_values <- numeric(pop_size)
+    
+      # draw number of mutations for a specimens
+    num_of_mutations <- pmax(rbinom(pop_size, k_max, p_t), 1)
     for(i in 1:pop_size){
-      population[[i]] <-  runif_perm(perm_size)
-      f_values[i] <- my_goal_function(population[[i]])
+      mutation_perm <- permutations::id
+      for(j in 1:num_of_mutations[i]){
+        mutation_perm <- as.cycle(mutation_perm * runif_transposition(perm_size))
+      }
+      
+      mutants[[i]] <- as.cycle(reproduced[[i]] * mutation_perm)
+      mutants_f_values[i] <- my_goal_function(mutants[[i]])
     }
+    
+    success_rate <- mean(mutants_f_values > reproduced_f_value)
+    
+    if(success_rate > success_treshold){
+      p_t <- 1 - (1 - p_t) * a # p_t will be bigger
+    }else{
+      p_t <- p_t * a # p_t will be smaller
+    }
+    
+    # TODO succession
+    population <- mutants
+    f_values <- mutants_f_values
+    # end of TODO
+    
+    # save the best
     best_f_value_new <- max(f_values)
     num_of_best_values <- length(best_f_value_list)
     
-    # save the best
     if(best_f_value_new > best_f_value_list[num_of_best_values]){
       best_f_value_list[num_of_best_values+1] <- best_f_value_new
       names(best_f_value_list) <- c(names(best_f_value_list)[1:num_of_best_values],
