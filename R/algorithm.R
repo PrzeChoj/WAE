@@ -4,10 +4,10 @@ source("R/utils.R")
 #' 
 #' @examples
 #' n_number <- 20
-#' U <- U_maker(p=5, n=n_number)
-#' out <- evolutional_optimization(U, n_number, max_iter=100, pop_size=3)
-#' out[["best_f_value"]]
+#' U <- U_maker(p=10, n=n_number)
+#' out <- evolutional_optimization(U, n_number, max_iter=100, pop_size=5)
 #' out[["best_permutation"]]
+#' out[["best_f_value"]]
 #' out <- evolutional_optimization(U, n_number, max_iter=100, pop_size=3, a=1)
 evolutional_optimization <- function(U, n_number, max_iter=100, pop_size=3,
                                      success_treshold=0.2, p_0=0.5,
@@ -16,7 +16,7 @@ evolutional_optimization <- function(U, n_number, max_iter=100, pop_size=3,
                                      delta=3, D_matrix=NULL,
                                      show_progress_bar=TRUE){
   if(show_progress_bar)
-    progressBar = utils::txtProgressBar(min = 0, max = max_iter, initial = 1)
+    progressBar <- utils::txtProgressBar(min = 0, max = max_iter, initial = 1)
   
   stopifnot(dim(U)[1] == dim(U)[2])
   perm_size <- dim(U)[1]
@@ -89,15 +89,15 @@ evolutional_optimization <- function(U, n_number, max_iter=100, pop_size=3,
     # end of TODO
     
     # save the best
-    best_f_value_new <- max(f_values)
+    best_f_value_mutant <- max(mutants_f_values)
     num_of_best_values <- length(best_f_value_list)
     
-    if(best_f_value_new > best_f_value_list[num_of_best_values]){
-      best_f_value_list[num_of_best_values+1] <- best_f_value_new
+    if(best_f_value_mutant > best_f_value_list[num_of_best_values]){
+      best_f_value_list[num_of_best_values+1] <- best_f_value_mutant
       names(best_f_value_list) <- c(names(best_f_value_list)[1:num_of_best_values],
-                               as.character(iteration))
-      best_f_value <- best_f_value_new
-      best_permutation <- population[[which(f_values == best_f_value_new)[1]]]
+                                    as.character(iteration))
+      best_f_value <- best_f_value_mutant
+      best_permutation <- mutants[[which(mutants_f_values == best_f_value_mutant)[1]]]
     }
   }
   
