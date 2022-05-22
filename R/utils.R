@@ -29,7 +29,7 @@ goal_function_maker <- function(p, n, sigma=NULL){
   U <- U_maker(p, n, sigma)
   
   my_goal_function <- function(perm){
-    goal_function(perm, p, n, U)
+    goal_function(perm, n, U)
   }
   
   attr(my_goal_function, "U") <- U

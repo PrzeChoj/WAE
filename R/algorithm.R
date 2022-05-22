@@ -5,11 +5,11 @@ source("R/utils.R")
 #' @examples
 #' n_number <- 20
 #' U <- U_maker(p=10, n=n_number)
-#' out <- evolutional_optimization(U, n_number, max_iter=100, pop_size=5)
+#' out <- evolutional_optimization(U, n_number, max_iter=100, pop_size=15)
 #' out[["best_permutation"]]
 #' out[["best_f_value"]]
-#' out <- evolutional_optimization(U, n_number, max_iter=100, pop_size=3, a=1)
-evolutional_optimization <- function(U, n_number, max_iter=100, pop_size=3,
+#' out2 <- evolutional_optimization(U, n_number, max_iter=100, pop_size=15, a=1)
+evolutional_optimization <- function(U, n_number, max_iter=100, pop_size=15,
                                      success_treshold=0.2, p_0=0.5,
                                      a=0.817, k_max=1,
                                      tournament_size=2,
@@ -33,7 +33,7 @@ evolutional_optimization <- function(U, n_number, max_iter=100, pop_size=3,
   success_rate_list[TRUE] <- NA
   
   my_goal_function <- function(perm){
-    gips::goal_function(perm, perm_size, n_number, U,
+    gips::goal_function(perm, n_number, U,
                         delta=delta, D_matrix=D_matrix)
   }
   
@@ -41,8 +41,6 @@ evolutional_optimization <- function(U, n_number, max_iter=100, pop_size=3,
   mean_f_value_list[TRUE] <- NA
   
   f_values <- numeric(pop_size)
-  best_f_value_list <- 0  # f is always positive, so this is smaller than any f value
-  best_permutation <- NULL
   
   # init population
   population <- list()
@@ -62,6 +60,9 @@ evolutional_optimization <- function(U, n_number, max_iter=100, pop_size=3,
       utils::setTxtProgressBar(progressBar, iteration)
     
     # TODO(Reprodukcja)
+    last_population <- population
+    last_f_values <- f_values
+    
     reproduced <- population
     reproduced_f_value <- f_values
     # end of TODO
@@ -75,7 +76,7 @@ evolutional_optimization <- function(U, n_number, max_iter=100, pop_size=3,
     for(i in 1:pop_size){
       mutation_perm <- permutations::id
       for(j in 1:num_of_mutations[i]){
-        mutation_perm <- as.cycle(mutation_perm * runif_transposition(perm_size))
+        mutation_perm <- as.cycle(mutation_perm * runif_transposition(perm_size))  # TODO(this is computationally expensive)
       }
       
       mutants[[i]] <- as.cycle(reproduced[[i]] * mutation_perm)
@@ -84,7 +85,6 @@ evolutional_optimization <- function(U, n_number, max_iter=100, pop_size=3,
     
       # modify p_t
     success_rate_list[iteration] <- mean(mutants_f_values > reproduced_f_value)
-    
     if(success_rate_list[iteration] > success_treshold){
       p_t_list[iteration] <- 1 - (1 - p_t_list[iteration-1]) * a # p_t will be bigger
     }else{
@@ -94,13 +94,21 @@ evolutional_optimization <- function(U, n_number, max_iter=100, pop_size=3,
     
     # succession
     population <- list()
+    
+    # TODO(Elitaryzm)
+    #stopifnot(pop_size > 10)
+    #best_part <- order(f_values)[1:10]
+    #for(i in 1:10){  # TODO(10 should be a parameter)
+    #  population[[i]] <- last_population[[best_part[i]]]
+    #  f_values[i] <- last_f_values[i]
+    #}
     for(i in 1:pop_size){
       players <- sample(pop_size, tournament_size, replace = TRUE)
       
       tournament_f_values <- mutants_f_values[players]
       winner <- which(tournament_f_values == max(tournament_f_values))[1]
       
-      # TODO(Think or ask if all specimens will be mutated)
+      # TODO(ask if all specimens should be mutated)
       population[[i]] <- mutants[[winner]]
       f_values[i] <- mutants_f_values[i]
     }
@@ -113,6 +121,7 @@ evolutional_optimization <- function(U, n_number, max_iter=100, pop_size=3,
     best_f_value_mutant <- max(mutants_f_values)
     num_of_best_values <- length(best_f_value_list)
     
+      # new best?
     if(best_f_value_mutant > best_f_value_list[num_of_best_values]){
       best_f_value_list[num_of_best_values+1] <- best_f_value_mutant
       names(best_f_value_list) <- c(names(best_f_value_list)[1:num_of_best_values],
@@ -132,14 +141,6 @@ evolutional_optimization <- function(U, n_number, max_iter=100, pop_size=3,
        "p_t_list" = p_t_list,
        "mean_f_value_list" = mean_f_value_list)
 }
-
-
-
-
-
-
-
-
 
 
 
