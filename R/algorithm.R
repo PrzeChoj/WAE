@@ -44,7 +44,9 @@ evolutional_optimization <- function(U, n_number, max_iter=100, pop_size=15,
   
   # init population
   population <- list()
-  for(i in 1:pop_size){
+  population[[1]] <- permutations::id # start with an identity
+  f_values[1] <- my_goal_function(population[[1]])
+  for(i in 2:pop_size){
     population[[i]] <- runif_perm(perm_size)
     f_values[i] <- my_goal_function(population[[i]])
   }
@@ -97,8 +99,8 @@ evolutional_optimization <- function(U, n_number, max_iter=100, pop_size=15,
     
     # TODO(Elitaryzm)
     #stopifnot(pop_size > 10)
-    #best_part <- order(f_values)[1:10]
-    #for(i in 1:10){  # TODO(10 should be a parameter)
+    #best_part <- order(f_values)[1:2]
+    #for(i in 1:2){  # TODO(10 should be a parameter)
     #  population[[i]] <- last_population[[best_part[i]]]
     #  f_values[i] <- last_f_values[i]
     #}
@@ -145,12 +147,74 @@ evolutional_optimization <- function(U, n_number, max_iter=100, pop_size=15,
 
 
 
-
-
-
-
-
-
+best_growth <- function(U, n_number, max_iter=20,
+                        delta=3, D_matrix=NULL,
+                        show_progress_bar=TRUE,
+                        starting_perm=permutations::id){
+  if(show_progress_bar)
+    progressBar <- utils::txtProgressBar(min = 0, max = max_iter, initial = 1)
+  
+  stopifnot(dim(U)[1] == dim(U)[2])
+  perm_size <- dim(U)[1]
+  
+  if(is.null(D_matrix)){
+    D_matrix <- diag(nrow = perm_size)
+  }
+  
+  my_goal_function <- function(perm){
+    gips::goal_function(perm, n_number, U,
+                        delta=delta, D_matrix=D_matrix)
+  }
+  
+  f_values <- numeric(max_iter)
+  
+  # init
+  speciments <- list()
+  speciments[[1]] <- starting_perm#TODO (Czemu ifelse nie dizala?) #ifelse(is.null(starting_perm), permutations::id, starting_perm)
+  f_values[1] <- my_goal_function(speciments[[1]])
+  
+  # mail loop
+  for(iteration in 2:max_iter){
+    if(show_progress_bar)
+      utils::setTxtProgressBar(progressBar, iteration)
+    
+    best_neighbour <- NULL
+    best_neighbour_value <- -Inf
+    for(i in 1:(perm_size-1)){
+      for(j in (i+1):perm_size){
+        neighbour <- as.cycle(speciments[[iteration - 1]] * as.cycle(c(i, j)))
+        neighbour_value <- my_goal_function(neighbour)
+        
+        if(neighbour_value > best_neighbour_value){
+          best_neighbour_value <- neighbour_value
+          best_neighbour <- neighbour
+        }
+      }
+    }
+    
+    if(best_neighbour_value > f_values[iteration - 1]){
+      f_values[iteration] <- best_neighbour_value
+      speciments[[iteration]] <- best_neighbour
+    }else{
+      iteration <- iteration-1
+      break
+    }
+  }
+    
+  if(show_progress_bar)
+    close(progressBar)
+  
+  if(iteration == max_iter)
+    warning("Algorithm did not converge! Try with bigger max_iter and starting_perm == output$found_perm")
+  else
+    f_values <- f_values[1:iteration]
+  
+  list("permutations" = speciments,
+       "iterations_performed" = iteration,
+       "permutations_f_values" = f_values,
+       "found_perm" = speciments[[iteration]],
+       "found_perm_f_value" = f_values[iteration])
+}
 
 
 
