@@ -10,7 +10,7 @@ source("R/utils.R")
 #' out[["best_f_value"]]
 #' out2 <- evolutional_optimization(U, n_number, max_iter=100, pop_size=15, a=1)
 evolutional_optimization <- function(U, n_number, max_iter=100, pop_size=15,
-                                     success_treshold=0.2, p_0=0.5,
+                                     success_treshold=0.025, p_0=0.5,
                                      a=0.817, k_max=1,
                                      tournament_size=2,
                                      delta=3, D_matrix=NULL,
@@ -44,9 +44,10 @@ evolutional_optimization <- function(U, n_number, max_iter=100, pop_size=15,
   
   # init population
   population <- list()
-  population[[1]] <- permutations::id # start with an identity
-  f_values[1] <- my_goal_function(population[[1]])
-  for(i in 2:pop_size){
+  # TODO(start with an identity)
+  #population[[1]] <- permutations::id # start with an identity
+  #f_values[1] <- my_goal_function(population[[1]])
+  for(i in 1:pop_size){
     population[[i]] <- runif_perm(perm_size)
     f_values[i] <- my_goal_function(population[[i]])
   }
@@ -93,6 +94,19 @@ evolutional_optimization <- function(U, n_number, max_iter=100, pop_size=15,
       p_t_list[iteration] <- p_t_list[iteration-1] * a # p_t will be smaller
     }
     
+    # save the best mutant
+    best_f_value_mutant <- max(mutants_f_values)
+    num_of_best_values <- length(best_f_value_list)
+    
+    # new best?
+    if(best_f_value_mutant > best_f_value_list[num_of_best_values]){
+      best_f_value_list[num_of_best_values+1] <- best_f_value_mutant
+      names(best_f_value_list) <- c(names(best_f_value_list)[1:num_of_best_values],
+                                    as.character(iteration))
+      best_f_value <- best_f_value_mutant
+      best_permutation <- mutants[[which(mutants_f_values == best_f_value_mutant)[1]]]
+    }
+    
     
     # succession
     population <- list()
@@ -104,33 +118,33 @@ evolutional_optimization <- function(U, n_number, max_iter=100, pop_size=15,
     #  population[[i]] <- last_population[[best_part[i]]]
     #  f_values[i] <- last_f_values[i]
     #}
-    for(i in 1:pop_size){
-      players <- sample(pop_size, tournament_size, replace = TRUE)
-      
-      tournament_f_values <- mutants_f_values[players]
-      winner <- which(tournament_f_values == max(tournament_f_values))[1]
-      
-      # TODO(ask if all specimens should be mutated)
-      population[[i]] <- mutants[[winner]]
-      f_values[i] <- mutants_f_values[i]
+    succession_type <- "tournament"
+    if(succession_type == "tournament"){
+      for(i in 1:pop_size){
+        players <- sample(pop_size, tournament_size, replace = TRUE)
+        
+        tournament_f_values <- mutants_f_values[players]
+        winner <- players[which(tournament_f_values == max(tournament_f_values))[1]]
+        
+        # TODO(ask if all specimens should be mutated)
+        population[[i]] <- mutants[[winner]]
+        f_values[i] <- mutants_f_values[winner]
+      }
     }
-    
+    if(succession_type == "threshold"){
+      mutants_bests <- order(mutants_f_values,
+                             decreasing = TRUE)[1:ceiling(pop_size * 0.2)]
+      
+      for(i in 1:pop_size){
+        player <- sample(mutants_bests, 1)
+        
+        population[[i]] <- mutants[[player]]
+        f_values[i] <- mutants_f_values[player]
+      }
+    }
     
     # save the mean
     mean_f_value_list[iteration] <- mean(f_values)
-    
-    # save the best
-    best_f_value_mutant <- max(mutants_f_values)
-    num_of_best_values <- length(best_f_value_list)
-    
-      # new best?
-    if(best_f_value_mutant > best_f_value_list[num_of_best_values]){
-      best_f_value_list[num_of_best_values+1] <- best_f_value_mutant
-      names(best_f_value_list) <- c(names(best_f_value_list)[1:num_of_best_values],
-                                    as.character(iteration))
-      best_f_value <- best_f_value_mutant
-      best_permutation <- mutants[[which(mutants_f_values == best_f_value_mutant)[1]]]
-    }
   }
   
   if(show_progress_bar)
@@ -206,8 +220,11 @@ best_growth <- function(U, n_number, max_iter=20,
   
   if(iteration == max_iter)
     warning("Algorithm did not converge! Try with bigger max_iter and starting_perm == output$found_perm")
-  else
+  else{
     f_values <- f_values[1:iteration]
+    print(paste0("Algorithm did converge in ", iteration, " iterations"))
+  }
+    
   
   list("permutations" = speciments,
        "iterations_performed" = iteration,
