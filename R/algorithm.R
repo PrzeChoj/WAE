@@ -5,26 +5,21 @@ source("R/utils.R")
 #' @examples
 #' n_number <- 20
 #' U <- U_maker(p=10, n=n_number)
-#' out <- evolutional_optimization(U, n_number, max_iter=100, pop_size=15)
+#' my_goal_function <- 
+#' out <- evolutional_optimization(my_goal_function, max_iter=100, pop_size=15)
 #' out[["best_permutation"]]
 #' out[["best_f_value"]]
-#' out2 <- evolutional_optimization(U, n_number, max_iter=100, pop_size=15, a=1)
-evolutional_optimization <- function(U, n_number, max_iter=100, pop_size=15,
+#' out2 <- evolutional_optimization(my_goal_function, max_iter=100, pop_size=15, a=1)
+evolutional_optimization <- function(my_goal_function, max_iter=100, pop_size=15,
                                      success_treshold=0.025, p_0=0.5,
                                      a=0.817, k_max=1,
                                      tournament_size=2,
-                                     delta=3, D_matrix=NULL,
                                      show_progress_bar=TRUE){
   if(show_progress_bar)
     progressBar <- utils::txtProgressBar(min = 0, max = max_iter, initial = 1)
   
-  stopifnot(dim(U)[1] == dim(U)[2])
   stopifnot(pop_size >= tournament_size)
-  perm_size <- dim(U)[1]
-  
-  if(is.null(D_matrix)){
-    D_matrix <- diag(nrow = perm_size)
-  }
+  perm_size <- dim(attr(my_goal_function, "U"))[1]
   
   p_t_list <- numeric(max_iter)
   p_t_list[TRUE] <- NA
@@ -32,10 +27,6 @@ evolutional_optimization <- function(U, n_number, max_iter=100, pop_size=15,
   success_rate_list <- numeric(max_iter)
   success_rate_list[TRUE] <- NA
   
-  my_goal_function <- function(perm){
-    gips::goal_function(perm, n_number, U,
-                        delta=delta, D_matrix=D_matrix)
-  }
   
   mean_f_value_list <- numeric(max_iter)
   mean_f_value_list[TRUE] <- NA
@@ -155,85 +146,48 @@ evolutional_optimization <- function(U, n_number, max_iter=100, pop_size=15,
        "best_f_value" = best_f_value,
        "success_rate_list" = success_rate_list,
        "p_t_list" = p_t_list,
-       "mean_f_value_list" = mean_f_value_list)
+       "mean_f_value_list" = mean_f_value_list,
+       "iterations_performed" = iteration)
 }
 
 
 
-
-best_growth <- function(U, n_number, max_iter=20,
-                        delta=3, D_matrix=NULL,
-                        show_progress_bar=TRUE,
-                        starting_perm=permutations::id){
+monte_carlo <- function(my_goal_function, max_iter=100,
+                        show_progress_bar=TRUE){
   if(show_progress_bar)
     progressBar <- utils::txtProgressBar(min = 0, max = max_iter, initial = 1)
   
-  stopifnot(dim(U)[1] == dim(U)[2])
-  perm_size <- dim(U)[1]
+  perm_size <- dim(attr(my_goal_function, "U"))[1]
+  f_values <- numeric(pop_size)
   
-  if(is.null(D_matrix)){
-    D_matrix <- diag(nrow = perm_size)
-  }
-  
-  my_goal_function <- function(perm){
-    gips::goal_function(perm, n_number, U,
-                        delta=delta, D_matrix=D_matrix)
-  }
-  
-  f_values <- numeric(max_iter)
-  
-  # init
-  speciments <- list()
-  speciments[[1]] <- starting_perm#TODO (Czemu ifelse nie dizala?) #ifelse(is.null(starting_perm), permutations::id, starting_perm)
-  f_values[1] <- my_goal_function(speciments[[1]])
+  f_values[1] <- my_goal_function(as.cycle(rperm(1, perm_size)))
+  best_f_value_list <- f_values[1]
+  best_f_value <- best_f_value_list[1]
+  num_of_best_values <- 1
   
   # mail loop
   for(iteration in 2:max_iter){
     if(show_progress_bar)
       utils::setTxtProgressBar(progressBar, iteration)
     
-    best_neighbour <- NULL
-    best_neighbour_value <- -Inf
-    for(i in 1:(perm_size-1)){
-      for(j in (i+1):perm_size){
-        neighbour <- as.cycle(speciments[[iteration - 1]] * as.cycle(c(i, j)))
-        neighbour_value <- my_goal_function(neighbour)
-        
-        if(neighbour_value > best_neighbour_value){
-          best_neighbour_value <- neighbour_value
-          best_neighbour <- neighbour
-        }
-      }
-    }
+    new_permutation <- as.cycle(rperm(1, perm_size))
+    f_values[iteration] <- my_goal_function(new_permutation)
     
-    if(best_neighbour_value > f_values[iteration - 1]){
-      f_values[iteration] <- best_neighbour_value
-      speciments[[iteration]] <- best_neighbour
-    }else{
-      iteration <- iteration-1
-      break
+    if(f_values[iteration] > best_f_value){
+      best_permutation <- new_permutation
+      best_f_value <- f_values[iteration]
+      best_f_value_list[num_of_best_values+1] <- best_f_value
+      names(best_f_value_list) <- c(names(best_f_value_list)[1:num_of_best_values],
+                                    as.character(iteration))
+      num_of_best_values <- num_of_best_values + 1
     }
   }
-    
-  if(show_progress_bar)
-    close(progressBar)
   
-  if(iteration == max_iter)
-    warning("Algorithm did not converge! Try with bigger max_iter and starting_perm == output$found_perm")
-  else{
-    f_values <- f_values[1:iteration]
-    print(paste0("Algorithm did converge in ", iteration, " iterations"))
-  }
-    
-  
-  list("permutations" = speciments,
-       "iterations_performed" = iteration,
-       "permutations_f_values" = f_values,
-       "found_perm" = speciments[[iteration]],
-       "found_perm_f_value" = f_values[iteration])
+  list("best_f_value_list" = best_f_value_list,
+       "best_permutation" = best_permutation,
+       "best_f_value" = best_f_value,
+       "iterations_performed" = iteration)
 }
-
-
 
 
 
