@@ -33,29 +33,40 @@ M <- 3
 # MH on the same number of iterations * M:
 mh <- MH(U, n_number, bg$iterations_performed * choose(perm_size, 2) * M)
 
-num_of_lines <- 7
+num_of_algs <- 7
 plot(mh, ylim=c(f_val_id, f_val_max), type="best", show_legend=FALSE,
-     color = rainbow(num_of_lines)[1])
+     color = rainbow(num_of_algs)[1])
 
-abline(a=f_val_max, b=0, col=rainbow(num_of_lines)[2])
+abline(a=f_val_max, b=0, col=rainbow(num_of_algs)[2])
 
 lines((1:bg[["iterations_performed"]]) * choose(perm_size, 2),
-      bg$goal_function_logvalues, col=rainbow(num_of_lines)[3],
+      bg$goal_function_logvalues, col=rainbow(num_of_algs)[3],
       pch=4) # this ended after this many iterations
+
+# Monte Carlo
+set.seed(1234)
+mc <- monte_carlo(my_goal_function,
+                  max_iter = bg$iterations_performed * choose(perm_size, 2) * M)
+
+lines(c(as.numeric(names(mc[["best_f_value_list"]]))),
+      mc[["best_f_value_list"]], col=rainbow(num_of_algs)[4],
+      lwd=3)
+
 
 # algorytm ewolucyjny
 set.seed(1234)
 
 pop_size <- 100
+
 eo <- evolutional_optimization(
   my_goal_function=my_goal_function,
   max_iter=floor(bg$iterations_performed * choose(perm_size, 2) * M / pop_size),
   pop_size=pop_size,
-  tournament_size = 50, a=0.9,
-  k_max = 2 # raczej ustawiac k_max < perm_size
+  tournament_size = 50,
+  k_max = 1 # raczej ustawiac k_max < perm_size
 )
 lines(c(as.numeric(names(eo[["best_f_value_list"]])) * pop_size),
-      eo[["best_f_value_list"]], col=rainbow(num_of_lines)[4],
+      eo[["best_f_value_list"]], col=rainbow(num_of_algs)[5],
       lwd=3)
 
 
@@ -66,11 +77,11 @@ eo[["p_t_list"]]
 eo2 <- evolutional_optimization(
   my_goal_function=my_goal_function,
   max_iter=floor(bg$iterations_performed * choose(perm_size, 2) * M / pop_size),
-  tournament_size = 50, a=0.9,
-  pop_size=pop_size, k_max = perm_size-1
+  tournament_size = 50,
+  pop_size=pop_size, k_max = 2
 )
 lines(c(as.numeric(names(eo2[["best_f_value_list"]])) * pop_size),
-      eo2[["best_f_value_list"]], col=rainbow(num_of_lines)[5],
+      eo2[["best_f_value_list"]], col=rainbow(num_of_algs)[6],
       lwd=3)
 
 
@@ -80,24 +91,20 @@ eo2$p_t_list # to jest bardzo duze wciaz
 eo3 <- evolutional_optimization(
   my_goal_function=my_goal_function,
   max_iter=floor(bg$iterations_performed * choose(perm_size, 2) * M / pop_size),
-  tournament_size = 50, a=0.9,
-  pop_size=pop_size, k_max = 7
+  tournament_size = 15, a=0.1, success_treshold = 0.08,
+  pop_size=pop_size, k_max = 4
 )
 
 lines(c(as.numeric(names(eo3[["best_f_value_list"]])) * pop_size),
-      eo3[["best_f_value_list"]], col=rainbow(num_of_lines)[6],
+      eo3[["best_f_value_list"]], col=rainbow(num_of_algs)[7],
       lwd=3)
 
-mc <- monte_carlo(my_goal_function,
-                  max_iter = bg$iterations_performed * choose(perm_size, 2) * M)
 
-lines(c(as.numeric(names(mc[["best_f_value_list"]]))),
-      mc[["best_f_value_list"]], col=rainbow(num_of_lines)[7],
-      lwd=3)
+
 
 
 # TODO list:
-  # 1. poprawienie adaptacji mutacji na sigmoid
+  # 1. 
   # 2. EPDF podobne co w symulowanym wyrzazaniu (plotowanie i generowanie)
   # 3. Porównanie k_max = 1, k_max = log(p), k_max = p/2, k_max = p-1
   # 4. ?

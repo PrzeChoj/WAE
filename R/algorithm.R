@@ -2,28 +2,33 @@ source("R/utils.R")
 
 #' W mutacji liczba transpozycji będzie losowana z rozkladu binomialnego
 #' 
+#' @param a Współczynnik sterowania mutacją. O tyle przesuniemy się w prawo/lewo w funkcji sigmoid
+#' 
 #' @examples
-#' n_number <- 20
-#' U <- U_maker(p=10, n=n_number)
-#' my_goal_function <- 
+#' my_goal_function <- goal_function_maker(10, 20)
 #' out <- evolutional_optimization(my_goal_function, max_iter=100, pop_size=15)
 #' out[["best_permutation"]]
 #' out[["best_f_value"]]
 #' out2 <- evolutional_optimization(my_goal_function, max_iter=100, pop_size=15, a=1)
 evolutional_optimization <- function(my_goal_function, max_iter=100, pop_size=15,
                                      success_treshold=0.025, p_0=0.5,
-                                     a=0.817, k_max=1,
+                                     a=1, k_max=1,
                                      tournament_size=2,
                                      show_progress_bar=TRUE){
   if(show_progress_bar)
     progressBar <- utils::txtProgressBar(min = 0, max = max_iter, initial = 1)
   
-  stopifnot(pop_size >= tournament_size)
+  stopifnot(pop_size >= tournament_size,
+            p_0 <= 1,
+            p_0 >= 0,
+            a >= 0)
   perm_size <- dim(attr(my_goal_function, "U"))[1]
   
   p_t_list <- numeric(max_iter)
   p_t_list[TRUE] <- NA
   p_t_list[1] <- p_0
+  mutation_scaler <- log(p_0/(1-p_0)) # p_0 == sigm(mutation_scaler) == 1/(1+exp(-mutation_scaler))
+  
   success_rate_list <- numeric(max_iter)
   success_rate_list[TRUE] <- NA
   
@@ -77,13 +82,14 @@ evolutional_optimization <- function(my_goal_function, max_iter=100, pop_size=15
       mutants_f_values[i] <- my_goal_function(mutants[[i]])
     }
     
-      # modify p_t
+    # modify p_t
     success_rate_list[iteration] <- mean(mutants_f_values > reproduced_f_value)
     if(success_rate_list[iteration] > success_treshold){
-      p_t_list[iteration] <- 1 - (1 - p_t_list[iteration-1]) * a # p_t will be bigger
+      mutation_scaler <- mutation_scaler + a # p_t will be bigger
     }else{
-      p_t_list[iteration] <- p_t_list[iteration-1] * a # p_t will be smaller
+      mutation_scaler <- mutation_scaler - a # p_t will be smaller
     }
+    p_t_list[iteration] <- 1 / (1 + exp(-mutation_scaler))
     
     # save the best mutant
     best_f_value_mutant <- max(mutants_f_values)
@@ -138,6 +144,8 @@ evolutional_optimization <- function(my_goal_function, max_iter=100, pop_size=15
     mean_f_value_list[iteration] <- mean(f_values)
   }
   
+  names(mean_f_value_list) <- as.character(1:length(mean_f_value_list))
+  
   if(show_progress_bar)
     close(progressBar)
   
@@ -158,10 +166,11 @@ monte_carlo <- function(my_goal_function, max_iter=100,
     progressBar <- utils::txtProgressBar(min = 0, max = max_iter, initial = 1)
   
   perm_size <- dim(attr(my_goal_function, "U"))[1]
-  f_values <- numeric(pop_size)
+  f_values <- numeric(0)
   
   f_values[1] <- my_goal_function(as.cycle(rperm(1, perm_size)))
   best_f_value_list <- f_values[1]
+  names(best_f_value_list) <- "1"
   best_f_value <- best_f_value_list[1]
   num_of_best_values <- 1
   
