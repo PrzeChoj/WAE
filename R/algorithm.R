@@ -33,6 +33,7 @@ evolutional_optimization <- function(my_goal_function, max_iter=100, pop_size=15
   success_rate_list[TRUE] <- NA
   
   
+  goal_function_logvalues <- numeric(0)
   mean_f_value_list <- numeric(max_iter)
   mean_f_value_list[TRUE] <- NA
   
@@ -47,6 +48,7 @@ evolutional_optimization <- function(my_goal_function, max_iter=100, pop_size=15
     population[[i]] <- runif_perm(perm_size)
     f_values[i] <- my_goal_function(population[[i]])
   }
+  goal_function_logvalues <- f_values
   best_f_value_list <- max(f_values)
   names(best_f_value_list) <- "1"
   best_f_value <- best_f_value_list[1]
@@ -81,6 +83,9 @@ evolutional_optimization <- function(my_goal_function, max_iter=100, pop_size=15
       mutants[[i]] <- as.cycle(reproduced[[i]] * mutation_perm)
       mutants_f_values[i] <- my_goal_function(mutants[[i]])
     }
+    
+    # save all fvalues
+    goal_function_logvalues <- c(goal_function_logvalues, mutants_f_values)
     
     # modify p_t
     success_rate_list[iteration] <- mean(mutants_f_values > reproduced_f_value)
@@ -155,7 +160,8 @@ evolutional_optimization <- function(my_goal_function, max_iter=100, pop_size=15
        "success_rate_list" = success_rate_list,
        "p_t_list" = p_t_list,
        "mean_f_value_list" = mean_f_value_list,
-       "iterations_performed" = iteration)
+       "iterations_performed" = iteration,
+       "goal_function_logvalues" = goal_function_logvalues)
 }
 
 
