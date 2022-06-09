@@ -62,7 +62,7 @@ eo <- evolutional_optimization(
   my_goal_function=my_goal_function,
   max_iter=floor(bg$iterations_performed * choose(perm_size, 2) * M / pop_size),
   pop_size=pop_size,
-  tournament_size = 50,
+  tournament_part = 0.5,
   k_max = 1 # raczej ustawiac k_max < perm_size
 )
 lines(c(as.numeric(names(eo[["best_f_value_list"]])) * pop_size),
@@ -77,7 +77,7 @@ eo[["p_t_list"]]
 eo2 <- evolutional_optimization(
   my_goal_function=my_goal_function,
   max_iter=floor(bg$iterations_performed * choose(perm_size, 2) * M / pop_size),
-  tournament_size = 50,
+  tournament_part = 0.5,
   pop_size=pop_size, k_max = 2
 )
 lines(c(as.numeric(names(eo2[["best_f_value_list"]])) * pop_size),
@@ -91,7 +91,7 @@ eo2$p_t_list # to jest bardzo duze wciaz
 eo3 <- evolutional_optimization(
   my_goal_function=my_goal_function,
   max_iter=floor(bg$iterations_performed * choose(perm_size, 2) * M / pop_size),
-  tournament_size = 15, a=0.1, success_treshold = 0.08,
+  tournament_part = 0.1, a=0.1, success_treshold = 0.08,
   pop_size=pop_size, k_max = 4
 )
 

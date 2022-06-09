@@ -60,7 +60,7 @@ set.seed(1234)
 my_a <- c(0.1, 0.3, 0.5, 1)
 eo_list_out_1 <- get_list_of_lists_of_log_values(goal_function = my_goal_function, pop_size = 100,
                                                  success_treshold = 0.025, a = my_a,
-                                                 k_max = 5, tournament_size = 50,
+                                                 k_max = 5, tournament_part = 0.5,
                                                  M = 10, max_iter = 100) # PC 70 min
 #save(eo_list_out_1, file="data/eo_list_out_1.Rdata") # UWAGA! nie nadpisac!
 load("data/eo_list_out_1.Rdata")
@@ -80,7 +80,7 @@ set.seed(1234)
 my_k_max <- c(1, 2, 3, 4, 7, 14, 20)
 eo_list_out_2 <- get_list_of_lists_of_log_values(goal_function = my_goal_function, pop_size = 100,
                                                  success_treshold = 0.025, a = 0.3,
-                                                 k_max = my_k_max, tournament_size = 50,
+                                                 k_max = my_k_max, tournament_part = 0.5,
                                                  M = 30, max_iter = 100) # PC 6 hours 20 minutes
 #save(eo_list_out_2, file="data/eo_list_out_2.Rdata") # UWAGA! nie nadpisac!
 load("data/eo_list_out_2.Rdata")
@@ -95,7 +95,23 @@ plot_ecdf(eo_list_out_2_appended, min_val = f_val_med, max_val = f_val_max, refe
 
 
 
-# 3. pop_size?
+# 3. Start tuning for pop_size:
+set.seed(1234)
+my_pop_size <- c(10, 30, 70, 100, 150, 200)
+eo_list_out_3 <- get_list_of_lists_of_log_values(goal_function = my_goal_function, pop_size = my_pop_size,
+                                                 success_treshold = 0.025, a = 0.3,
+                                                 k_max = 4, tournament_part = 0.5,
+                                                 M = 10, max_iter = 1000, max_f_calls = 10000) # PC 2 h 40 min?
+#save(eo_list_out_3, file="data/eo_list_out_3.Rdata") # UWAGA! nie nadpisac!
+load("data/eo_list_out_3.Rdata")
+
+
+eo_list_out_3_appended <- append_the_list(eo_list_out_3, list(mh_list, mc_list,
+                                                              bg_start_id_list))
+
+plot_ecdf(eo_list_out_3_appended, min_val = f_val_med, max_val = f_val_max, reference_line = f_val_id,
+          legend_text = c(paste0("pop_size = ", my_pop_size), "MH", "MC", "BG_id"))
+# the best is pop_size = ?
 
 
 

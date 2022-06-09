@@ -3,6 +3,7 @@ source("R/utils.R")
 #' W mutacji liczba transpozycji będzie losowana z rozkladu binomialnego
 #' 
 #' @param a Współczynnik sterowania mutacją. O tyle przesuniemy się w prawo/lewo w funkcji sigmoid
+#' @param tournament_part Z przedziału (0, 1], jaka część populacji bierze udział w turnieju. Zaokrąglane w górę.
 #' 
 #' @examples
 #' my_goal_function <- goal_function_maker(10, 20)
@@ -13,15 +14,20 @@ source("R/utils.R")
 evolutional_optimization <- function(my_goal_function, max_iter=100, pop_size=15,
                                      success_treshold=0.025, p_0=0.5,
                                      a=1, k_max=1,
-                                     tournament_size=2,
+                                     tournament_part=0.5,
+                                     max_f_calls=Inf,
                                      show_progress_bar=TRUE){
   if(show_progress_bar)
     progressBar <- utils::txtProgressBar(min = 0, max = max_iter, initial = 1)
   
-  stopifnot(pop_size >= tournament_size,
+  stopifnot(tournament_part > 0,
+            tournament_part <= 1,
             p_0 <= 1,
             p_0 >= 0,
-            a >= 0)
+            a >= 0,
+            max_f_calls > 1)
+  tournament_size <- ceiling(tournament_part * pop_size)
+  
   perm_size <- dim(attr(my_goal_function, "U"))[1]
   
   p_t_list <- numeric(max_iter)
@@ -147,6 +153,11 @@ evolutional_optimization <- function(my_goal_function, max_iter=100, pop_size=15
     
     # save the mean
     mean_f_value_list[iteration] <- mean(f_values)
+    
+    # stop the search
+    if(length(goal_function_logvalues) + pop_size > max_f_calls){
+      break
+    }
   }
   
   names(mean_f_value_list) <- as.character(1:length(mean_f_value_list))
