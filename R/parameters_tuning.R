@@ -21,6 +21,14 @@ mh_list <- get_list_of_log_values_MH(my_goal_function, max_iter = 10000, M = 100
 #save(mh_list, file="data/mh_list.Rdata") # UWAGA! nie nadpisac!
 load("data/mh_list.Rdata")
 
+# MC for reference
+set.seed(1234)
+mc_list <- get_list_of_log_values_MC(my_goal_function, max_iter = 10000, M = 100) # PC 70 min
+#save(mc_list, file="data/mc_list.Rdata") # UWAGA! nie nadpisac!
+load("data/mc_list.Rdata")
+
+f_val_min <- 1:length(mc_list) %>% sapply(function(i){min(mc_list[[i]])}) %>% min # smallest of drawn values
+f_val_med <- median(mc_list[[1]]) # median of first part of drawn values
 
 
 # Tuning experiments
@@ -37,9 +45,10 @@ load("data/eo_list_out_1.Rdata")
 
 
 eo_list_out_1[[length(eo_list_out_1) + 1]] <- mh_list
+eo_list_out_1[[length(eo_list_out_1) + 1]] <- mc_list
 
-plot_ecdf(eo_list_out_1, min_val = f_val_id, max_val = f_val_max,
-          legend_text = c(paste0("a = ", my_a), "MH"))
+plot_ecdf(eo_list_out_1, min_val = f_val_med, max_val = f_val_max,
+          legend_text = c(paste0("a = ", my_a), "MH", "MC"))
 # the best is a = 0.3
 
 
@@ -56,9 +65,11 @@ load("data/eo_list_out_2.Rdata")
 
 
 eo_list_out_2[[length(eo_list_out_2) + 1]] <- mh_list
+eo_list_out_2[[length(eo_list_out_2) + 1]] <- mc_list
 
-plot_ecdf(eo_list_out_2, min_val = f_val_id, max_val = f_val_max,
-          legend_text = c(paste0("k_max = ", my_k_max), "MH"))
+plot_ecdf(eo_list_out_2, min_val = f_val_med, max_val = f_val_max,
+          legend_text = c(paste0("k_max = ", my_k_max), "MH", "MC"),
+          reference_line = f_val_id)
 # the best is k_max = 4
 
 

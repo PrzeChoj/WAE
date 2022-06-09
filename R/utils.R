@@ -79,7 +79,7 @@ trim_values <- function(values, min_val=NULL, max_val=NULL){
 plot_ecdf <- function(values_list, min_val, max_val, xlog = TRUE,
                       line_colours = "rainbow", max_y_scale = 1,
                       show_legend = TRUE, legend_text = NULL,
-                      my_title = "ECDF plot",
+                      reference_line = NULL, my_title = "ECDF plot",
                       my_xlab = NULL, my_ylab = NULL, my_sub = NULL){
   stopifnot(max_y_scale > 0, max_y_scale <= 1)
   
@@ -102,6 +102,10 @@ plot_ecdf <- function(values_list, min_val, max_val, xlog = TRUE,
   
   graphics::plot.new()
   graphics::plot.window(xlim, ylim)
+  
+  if(!is.null(reference_line)){ # the line for value of id permutation
+    abline(a = trim_values(reference_line, min_val, max_val), b = 0)
+  }
   
   for(i in 1:num_of_algorithms){
     avrage_for_ith_algorithm <- numeric(num_of_iters[i])
@@ -272,6 +276,42 @@ get_list_of_log_values_MH <- function(goal_function, max_iter, M, print_progress
              show_progress_bar = FALSE)
     
     list_of_log_values[[j]] <- mh[["goal_function_logvalues"]]
+  }
+  
+  if(print_progress){
+    close(progressBar)
+    
+    end_time <- Sys.time()
+    
+    print(end_time - start_time)
+  }
+  
+  list_of_log_values
+}
+
+
+
+get_list_of_log_values_MC <- function(goal_function, max_iter, M, print_progress = TRUE){
+  if(print_progress){
+    start_time <- Sys.time()
+  }
+  
+  list_of_lists_of_log_values <- list()
+  
+  if(print_progress){
+    progressBar <- utils::txtProgressBar(initial = 1, min = 0,
+                                         max = M)
+  }
+  
+  perm_size <- dim(attr(goal_function, "U"))[1]
+  
+  list_of_log_values <- list()
+  for(j in 1:M){
+    if(print_progress){
+      utils::setTxtProgressBar(progressBar, j)
+    }
+    
+    list_of_log_values[[j]] <- sapply(1:max_iter, function(i){goal_function(as.cycle(rperm(1, perm_size)))})
   }
   
   if(print_progress){
