@@ -46,7 +46,7 @@ set.seed(1234)
 # Use this with caution!!! It is incredibly hard to interpret! Only part of the length of the line is sensible!
 bg_start_random_list <- get_list_of_log_values_BG(my_goal_function, max_iter = 100, M = 100) # PC 27 min
 #save(bg_start_random_list, file="data/bg_start_random_list.Rdata") # UWAGA! nie nadpisac!
-load("data/bg_start_random_list.Rdata")
+#load("data/bg_start_random_list.Rdata")
 #bg_start_random_list_mean <- make_BG_mean(bg_start_random_list) # Use this with caution!!! It is incredibly hard to interpret! Only part of the length of the line is sensible!
 
 
@@ -101,7 +101,7 @@ my_pop_size <- c(10, 30, 70, 100, 150, 200)
 eo_list_out_3 <- get_list_of_lists_of_log_values(goal_function = my_goal_function, pop_size = my_pop_size,
                                                  success_treshold = 0.025, a = 0.3,
                                                  k_max = 4, tournament_part = 0.5,
-                                                 M = 10, max_iter = 1000, max_f_calls = 10000) # PC 2 h 40 min?
+                                                 M = 10, max_iter = 1000, max_f_calls = 10000) # PC 2 h
 #save(eo_list_out_3, file="data/eo_list_out_3.Rdata") # UWAGA! nie nadpisac!
 load("data/eo_list_out_3.Rdata")
 
@@ -110,7 +110,7 @@ eo_list_out_3_appended <- append_the_list(eo_list_out_3, list(mh_list, mc_list,
                                                               bg_start_id_list))
 
 plot_ecdf(eo_list_out_3_appended, min_val = f_val_med, max_val = f_val_max, reference_line = f_val_id,
-          legend_text = c(paste0("pop_size = ", my_pop_size), "MH", "MC", "BG_id"))
+          legend_text = c(paste0("pop_size = ", my_pop_size), "MH", "MC", "BG_id"), legend_cex = 0.9)
 # the best is pop_size = ?
 
 
