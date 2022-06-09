@@ -40,17 +40,17 @@ eo_list_out_1[[length(eo_list_out_1) + 1]] <- mh_list
 
 plot_ecdf(eo_list_out_1, min_val = f_val_id, max_val = f_val_max,
           legend_text = c(paste0("a = ", my_a), "MH"))
-
+# the best is a = 0.3
 
 
 
 # 2. Start tuning for k_max:
 set.seed(1234)
-my_k_max <- c(1, 2, 6, 14)
+my_k_max <- c(1, 2, 3, 4, 7, 14, 20)
 eo_list_out_2 <- get_list_of_lists_of_log_values(goal_function = my_goal_function, pop_size = 100,
                                                  success_treshold = 0.025, a = 0.3,
                                                  k_max = my_k_max, tournament_size = 50,
-                                                 M = 10, max_iter = 100) # PC ?
+                                                 M = 30, max_iter = 100) # PC 6 hours 20 minutes
 #save(eo_list_out_2, file="data/eo_list_out_2.Rdata") # UWAGA! nie nadpisac!
 load("data/eo_list_out_2.Rdata")
 
@@ -59,9 +59,11 @@ eo_list_out_2[[length(eo_list_out_2) + 1]] <- mh_list
 
 plot_ecdf(eo_list_out_2, min_val = f_val_id, max_val = f_val_max,
           legend_text = c(paste0("k_max = ", my_k_max), "MH"))
+# the best is k_max = 4
 
 
 
+# 3. pop_size?
 
 
 
