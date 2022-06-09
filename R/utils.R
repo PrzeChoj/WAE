@@ -33,6 +33,12 @@ goal_function_maker <- function(p, n, sigma=NULL){
   }
   
   attr(my_goal_function, "U") <- U
+  attr(my_goal_function, "n") <- n
+  if(is.null(sigma)){
+    attr(my_goal_function, "sigma") <- sigma_maker(p)
+  }else{
+    attr(my_goal_function, "sigma") <- sigma
+  }
   
   my_goal_function
 }
@@ -109,7 +115,13 @@ plot_ecdf <- function(values_list, min_val, max_val, xlog = TRUE,
     if(xlog){
       x_cords <- log10(x_cords)
     }
-    graphics::lines.default(x_cords, avrage_for_ith_algorithm,
+    
+    # making this line plot more CDF-like (no slopes):
+    x_cords <- c(x_cords[1], rep(x_cords[2:length(x_cords)], each=2))
+    y_cords <- c(rep(avrage_for_ith_algorithm[1:(length(avrage_for_ith_algorithm)-1)], each=2),
+                 avrage_for_ith_algorithm[length(avrage_for_ith_algorithm)])
+    
+    graphics::lines.default(x_cords, y_cords,
                             type = "l", col = line_colours[i],
                             lwd=4)
   }
@@ -230,6 +242,47 @@ get_list_of_lists_of_log_values <- function(goal_function, pop_size, success_tre
   }
   
   list_of_lists_of_log_values
+}
+
+
+
+
+
+
+
+get_list_of_log_values_MH <- function(goal_function, max_iter, M, print_progress = TRUE){
+  if(print_progress){
+    start_time <- Sys.time()
+  }
+  
+  list_of_lists_of_log_values <- list()
+  
+  if(print_progress){
+    progressBar <- utils::txtProgressBar(initial = 1, min = 0,
+                                         max = M)
+  }
+  
+  list_of_log_values <- list()
+  for(j in 1:M){
+    if(print_progress){
+      utils::setTxtProgressBar(progressBar, j)
+    }
+    
+    mh <- MH(attr(goal_function, "U"), n_number = attr(goal_function, "n"), max_iter = max_iter,
+             show_progress_bar = FALSE)
+    
+    list_of_log_values[[j]] <- mh[["goal_function_logvalues"]]
+  }
+  
+  if(print_progress){
+    close(progressBar)
+    
+    end_time <- Sys.time()
+    
+    print(end_time - start_time)
+  }
+  
+  list_of_log_values
 }
 
 
