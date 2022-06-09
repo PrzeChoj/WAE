@@ -78,7 +78,7 @@ trim_values <- function(values, min_val=NULL, max_val=NULL){
 #' @param max_val value that will be considered 1
 plot_ecdf <- function(values_list, min_val, max_val, xlog = TRUE,
                       line_colours = "rainbow", max_y_scale = 1,
-                      show_legend = TRUE, legend_text = NULL,
+                      show_legend = TRUE, legend_text = NULL, legend_cex=1,
                       reference_line = NULL, my_title = "ECDF plot",
                       my_xlab = NULL, my_ylab = NULL, my_sub = NULL){
   stopifnot(max_y_scale > 0, max_y_scale <= 1)
@@ -160,11 +160,20 @@ plot_ecdf <- function(values_list, min_val, max_val, xlog = TRUE,
     
     graphics::legend("topleft", inset=.002,
                      legend = legend_text,
-                     col = line_colours, cex = 1,
+                     col = line_colours, cex = legend_cex,
                      lwd = 4)
   }
   
   invisible(NULL)
+}
+
+
+append_the_list <- function(initial_list, additional_lists){
+  for(additional_list in additional_lists){
+    initial_list[[length(initial_list) + 1]] <- additional_list
+  }
+  
+  initial_list
 }
 
 
@@ -326,8 +335,64 @@ get_list_of_log_values_MC <- function(goal_function, max_iter, M, print_progress
 }
 
 
+get_list_of_log_values_BG <- function(goal_function, max_iter, M, print_progress = TRUE){
+  if(print_progress){
+    start_time <- Sys.time()
+  }
+  
+  list_of_lists_of_log_values <- list()
+  
+  if(print_progress){
+    progressBar <- utils::txtProgressBar(initial = 1, min = 0,
+                                         max = M)
+  }
+  
+  list_of_log_values <- list()
+  for(j in 1:M){
+    if(print_progress){
+      utils::setTxtProgressBar(progressBar, j)
+    }
+    
+    suppressWarnings({
+      bg <- best_growth(attr(goal_function, "U"), n_number = attr(goal_function, "n"), max_iter = max_iter,
+                        start_perm = as.cycle(rperm(1, perm_size)), show_progress_bar = FALSE)
+    })
+    
+    if(!bg[["did_converge"]]){
+      warning(paste0("In iteration ", j, " the BG algorithm did not converge in max_iter = ",
+                     max_iter, " iterations. Try with bigger max_iter."))
+    }
+    
+    list_of_log_values[[j]] <- bg[["goal_function_logvalues"]]
+  }
+  
+  if(print_progress){
+    close(progressBar)
+    
+    end_time <- Sys.time()
+    
+    print(end_time - start_time)
+  }
+  
+  list_of_log_values
+}
 
 
+make_BG_mean <- function(bg_list){
+  max_bg_length <- 1:length(bg_list) %>% sapply(function(i){
+    length(bg_list[[i]])
+  }) %>% max
+  
+  for(i in 1:length(bg_list)){
+    bg_list[[i]][length(bg_list[[i]] + 1):max_bg_length] <- NA
+  }
+  
+  bg_list_t <- purrr::transpose(bg_list) %>% simplify_all()
+  
+  mean_bg_rand <- sapply(1:max_bg_length, function(i){
+    mean(bg_list_t[[i]], na.rm=TRUE)
+  }) %>% as_vector() %>% list()
+}
 
 
 

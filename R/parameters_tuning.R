@@ -1,5 +1,5 @@
 library(magrittr)
-source("R/algorithm.R")
+source("R/algorithm.R") # devtools::install_github("PrzeChoj/gips")
 
 set.seed(1234)
 
@@ -16,10 +16,13 @@ perm_real <- as.cycle(1:perm_size)
 (f_val_id <- my_goal_function(permutations::id)) # 79.5
 
 
+
 # MH for reference
 mh_list <- get_list_of_log_values_MH(my_goal_function, max_iter = 10000, M = 100) # PC 120 min
 #save(mh_list, file="data/mh_list.Rdata") # UWAGA! nie nadpisac!
 load("data/mh_list.Rdata")
+
+
 
 # MC for reference
 set.seed(1234)
@@ -29,6 +32,25 @@ load("data/mc_list.Rdata")
 
 f_val_min <- 1:length(mc_list) %>% sapply(function(i){min(mc_list[[i]])}) %>% min # smallest of drawn values
 f_val_med <- median(mc_list[[1]]) # median of first part of drawn values
+
+
+
+# BG for reference
+set.seed(1234)
+bg_start_id_list <- list(best_growth(attr(my_goal_function, "U"), n_number = attr(my_goal_function, "n"),
+                                     max_iter = 20)[["goal_function_logvalues"]]) # max_iter == 14 is enought; bg_start_id is NOT random; PC 1 min
+#save(bg_start_id_list, file="data/bg_start_id_list.Rdata") # UWAGA! nie nadpisac!
+load("data/bg_start_id_list.Rdata")
+
+set.seed(1234)
+# Use this with caution!!! It is incredibly hard to interpret! Only part of the length of the line is sensible!
+bg_start_random_list <- get_list_of_log_values_BG(my_goal_function, max_iter = 100, M = 100) # PC 27 min
+#save(bg_start_random_list, file="data/bg_start_random_list.Rdata") # UWAGA! nie nadpisac!
+load("data/bg_start_random_list.Rdata")
+#bg_start_random_list_mean <- make_BG_mean(bg_start_random_list) # Use this with caution!!! It is incredibly hard to interpret! Only part of the length of the line is sensible!
+
+
+
 
 
 # Tuning experiments
@@ -44,11 +66,11 @@ eo_list_out_1 <- get_list_of_lists_of_log_values(goal_function = my_goal_functio
 load("data/eo_list_out_1.Rdata")
 
 
-eo_list_out_1[[length(eo_list_out_1) + 1]] <- mh_list
-eo_list_out_1[[length(eo_list_out_1) + 1]] <- mc_list
+eo_list_out_1_appended <- append_the_list(eo_list_out_1, list(mh_list, mc_list,
+                                                              bg_start_id_list))
 
-plot_ecdf(eo_list_out_1, min_val = f_val_med, max_val = f_val_max,
-          legend_text = c(paste0("a = ", my_a), "MH", "MC"))
+plot_ecdf(eo_list_out_1_appended, min_val = f_val_med, max_val = f_val_max, reference_line = f_val_id,
+          legend_text = c(paste0("a = ", my_a), "MH", "MC", "BG_id"))
 # the best is a = 0.3
 
 
@@ -64,12 +86,11 @@ eo_list_out_2 <- get_list_of_lists_of_log_values(goal_function = my_goal_functio
 load("data/eo_list_out_2.Rdata")
 
 
-eo_list_out_2[[length(eo_list_out_2) + 1]] <- mh_list
-eo_list_out_2[[length(eo_list_out_2) + 1]] <- mc_list
+eo_list_out_2_appended <- append_the_list(eo_list_out_2, list(mh_list, mc_list,
+                                                              bg_start_id_list))
 
-plot_ecdf(eo_list_out_2, min_val = f_val_med, max_val = f_val_max,
-          legend_text = c(paste0("k_max = ", my_k_max), "MH", "MC"),
-          reference_line = f_val_id)
+plot_ecdf(eo_list_out_2_appended, min_val = f_val_med, max_val = f_val_max, reference_line = f_val_id,
+          legend_text = c(paste0("k_max = ", my_k_max), "MH", "MC", "BG_id"), legend_cex = 0.8)
 # the best is k_max = 4
 
 
