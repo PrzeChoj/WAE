@@ -18,7 +18,7 @@ perm_real <- as.cycle(1:perm_size)
 
 
 # MH for reference
-mh_list <- get_list_of_log_values_MH(my_goal_function, max_iter = 10000, M = 100) # PC 120 min
+mh_list <- get_list_of_log_values_MH(my_goal_function, max_iter = 10000, M = 100) # PC 2 h
 #save(mh_list, file="data/mh_list.Rdata") # UWAGA! nie nadpisac!
 load("data/mh_list.Rdata")
 
@@ -71,7 +71,9 @@ eo_list_out_1_appended <- append_the_list(eo_list_out_1, list(mh_list, mc_list,
 
 plot_ecdf_list(eo_list_out_1_appended, paste0("a = ", my_a))
 # the best is a = 0.3
-plot_ecdf_list_single(eo_list_out_1[[2]])
+plot_ecdf_list_single(eo_list_out_1[[2]],
+                      my_title = paste0("ECDF plot - a = ",
+                                        my_a[2]))
 
 
 
@@ -92,7 +94,9 @@ eo_list_out_2_appended <- append_the_list(eo_list_out_2, list(mh_list, mc_list,
 
 plot_ecdf_list(eo_list_out_2_appended, paste0("k_max = ", my_k_max), legend_cex = 0.8)
 # the best is k_max = 4, but k = 1 is very close
-plot_ecdf_list_single(eo_list_out_2[[4]]) # unstable results
+plot_ecdf_list_single(eo_list_out_2[[4]], # unstable results
+                      my_title = paste0("ECDF plot - k_max = ",
+                                        my_k_max[4]))
 
 
 
@@ -115,9 +119,15 @@ eo_list_out_3_appended <- append_the_list(eo_list_out_3, list(mh_list, mc_list,
 par(mfrow = c(2,2))
 plot_ecdf_list(eo_list_out_3_appended, paste0("pop_size = ", my_pop_size), legend_cex = 0.4)
 # the best is pop_size = 100; as we used to. pop_size = 150 is very close
-plot_ecdf_list_single(eo_list_out_3[[4]]) # unstable results
-plot_ecdf_list_single(eo_list_out_3[[1]]) # transparently worse results
-plot_ecdf_list_single(eo_list_out_3[[6]]) # transparently worse results
+plot_ecdf_list_single(eo_list_out_3[[4]], # unstable results
+                      my_title = paste0("ECDF plot - pop_size = ",
+                                        my_pop_size[4]))
+plot_ecdf_list_single(eo_list_out_3[[1]], # transparently worse results
+                      my_title = paste0("ECDF plot - pop_size = ",
+                                        my_pop_size[1]))
+plot_ecdf_list_single(eo_list_out_3[[6]], # transparently worse results
+                      my_title = paste0("ECDF plot - pop_size = ",
+                                        my_pop_size[6]))
 par(mfrow = c(1,1))
 
 
@@ -139,8 +149,12 @@ eo_list_out_4_appended <- append_the_list(eo_list_out_4, list(mh_list, mc_list,
 
 plot_ecdf_list(eo_list_out_4_appended, paste0("tournament_part = ", my_tournament_part), legend_cex = 0.9)
 # the best is tournament_part = 0.5
-plot_ecdf_list_single(eo_list_out_4[[4]]) # 0.35; good results
-plot_ecdf_list_single(eo_list_out_4[[3]]) # 0.2 ; bad results
+plot_ecdf_list_single(eo_list_out_4[[4]], # 0.35; good results
+                      my_title = paste0("ECDF plot - tournament_part = ",
+                                        my_tournament_part[4]))
+plot_ecdf_list_single(eo_list_out_4[[3]], # 0.2 ; bad results
+                      my_title = paste0("ECDF plot - tournament_part = ",
+                                        my_tournament_part[3]))
 
 
 
@@ -161,8 +175,12 @@ eo_list_out_5_appended <- append_the_list(eo_list_out_5, list(mh_list, mc_list,
 
 plot_ecdf_list(eo_list_out_5_appended, paste0("success_treshold = ", my_success_treshold), legend_cex = 0.9)
 # the best is success_treshold = 0.031
-plot_ecdf_list_single(eo_list_out_5[[3]]) # 0.31; good results
-plot_ecdf_list_single(eo_list_out_5[[4]]) # 0.41; good results too
+plot_ecdf_list_single(eo_list_out_5[[3]], # 0.31; good results
+                      my_title = paste0("ECDF plot - success_treshold = ",
+                                        my_success_treshold[3]))
+plot_ecdf_list_single(eo_list_out_5[[4]], # 0.41; good results too
+                      my_title = paste0("ECDF plot - success_treshold = ",
+                                        my_success_treshold[4]))
 
 
 
@@ -184,9 +202,9 @@ eo_list_out_6_appended <- append_the_list(eo_list_out_6, list(mh_list, mc_list,
 par(mfrow = c(2,2))
 plot_ecdf_list(eo_list_out_6_appended, paste0("initization method = ", my_init), legend_cex = 0.55)
 # The lines are very close for this budget. Try with bigger budget:
-plot_ecdf_list_single(eo_list_out_6[[1]])
-plot_ecdf_list_single(eo_list_out_6[[2]])
-plot_ecdf_list_single(eo_list_out_6[[3]])
+plot_ecdf_list_single(eo_list_out_6[[1]], my_title = paste0("ECDF plot - init ", my_init[1]))
+plot_ecdf_list_single(eo_list_out_6[[2]], my_title = paste0("ECDF plot - init ", my_init[2]))
+plot_ecdf_list_single(eo_list_out_6[[3]], my_title = paste0("ECDF plot - init ", my_init[3]))
 par(mfrow = c(1,1))
 
 
@@ -198,7 +216,7 @@ my_init <- c("random", "random_close", "id_close")
 eo_list_out_7 <- get_list_of_lists_of_log_values(goal_function = my_goal_function, pop_size = 100,
                                                  success_treshold = 0.031, a = 0.3,
                                                  k_max = 4, tournament_part = 0.5, init = my_init,
-                                                 M = 5, max_iter = 1000, max_f_calls = 100000) # PC 4? h
+                                                 M = 5, max_iter = 1000, max_f_calls = 100000) # PC 3 h 50 min
 #save(eo_list_out_7, file="data/eo_list_out_7.Rdata") # UWAGA! nie nadpisac!
 load("data/eo_list_out_7.Rdata")
 
@@ -206,8 +224,19 @@ load("data/eo_list_out_7.Rdata")
 eo_list_out_7_appended <- append_the_list(eo_list_out_7, list(mh_list, mc_list,
                                                               bg_start_id_list))
 
+par(mfrow = c(2,2))
+plot_ecdf_list(eo_list_out_7_appended, paste0("initization method = ", my_init), legend_cex = 0.55)
+# The lines are very close for this budget. Try with bigger budget:
+plot_ecdf_list_single(eo_list_out_7[[1]], my_title = paste0("ECDF plot - init ", my_init[1]))
+plot_ecdf_list_single(eo_list_out_7[[2]], my_title = paste0("ECDF plot - init ", my_init[2]))
+plot_ecdf_list_single(eo_list_out_7[[3]], my_title = paste0("ECDF plot - init ", my_init[3]))
+par(mfrow = c(1,1))
+
 plot_ecdf_list(eo_list_out_7_appended, paste0("initization method = ", my_init))
-# the best is init = ?
+# The best is init = "random", so the one we used to use.
+  # Although, the differences does not seem big. The init = "random_close" had 1 unlucky run,
+  # others were very good. The init = "random" had 2 unlucky runs, but not as unlucky as "random_close".
+# More tests would be awesome, but the computing time like this is enormous for us.
 
 
 
