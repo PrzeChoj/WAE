@@ -111,11 +111,14 @@ load("data/eo_list_out_3.Rdata")
 eo_list_out_3_appended <- append_the_list(eo_list_out_3, list(mh_list, mc_list,
                                                               bg_start_id_list))
 
-plot_ecdf_list(eo_list_out_3_appended, paste0("pop_size = ", my_pop_size), legend_cex = 0.9)
+
+par(mfrow = c(2,2))
+plot_ecdf_list(eo_list_out_3_appended, paste0("pop_size = ", my_pop_size), legend_cex = 0.4)
 # the best is pop_size = 100; as we used to. pop_size = 150 is very close
 plot_ecdf_list_single(eo_list_out_3[[4]]) # unstable results
 plot_ecdf_list_single(eo_list_out_3[[1]]) # transparently worse results
 plot_ecdf_list_single(eo_list_out_3[[6]]) # transparently worse results
+par(mfrow = c(1,1))
 
 
 
