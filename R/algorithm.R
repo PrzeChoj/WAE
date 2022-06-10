@@ -72,13 +72,13 @@ evolutional_optimization <- function(my_goal_function, max_iter=100, pop_size=15
     population[[1]] <- runif_perm(perm_size) # initial perm
     
     for(i in 2:pop_size){
-      population[[i]] <- as.cycle(permutations::id * runif_transposition(perm_size)) # 1st neighbout
+      population[[i]] <- as.cycle(population[[1]] * runif_transposition(perm_size)) # 1st neighbout
     }
     for(i in 2:max(ceiling(2/3*pop_size), pop_size)){
-      population[[i]] <- as.cycle(permutations::id * runif_transposition(perm_size)) # 2nd neighbout
+      population[[i]] <- as.cycle(population[[1]] * runif_transposition(perm_size)) # 2nd neighbout
     }
     for(i in 2:max(ceiling(1/3*pop_size), pop_size)){
-      population[[i]] <- as.cycle(permutations::id * runif_transposition(perm_size)) # 3rd neighbout
+      population[[i]] <- as.cycle(population[[1]] * runif_transposition(perm_size)) # 3rd neighbout
     }
     
     
