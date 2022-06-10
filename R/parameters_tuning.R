@@ -111,11 +111,49 @@ eo_list_out_3_appended <- append_the_list(eo_list_out_3, list(mh_list, mc_list,
 
 plot_ecdf(eo_list_out_3_appended, min_val = f_val_med, max_val = f_val_max, reference_line = f_val_id,
           legend_text = c(paste0("pop_size = ", my_pop_size), "MH", "MC", "BG_id"), legend_cex = 0.9)
-# the best is pop_size = ?
+# the best is pop_size = 100; as we used to
 
 
 
 
+# 4. Start tuning for tournament_part:
+set.seed(1234)
+my_tournament_part <- c(0.07, 0.11, 0.2, 0.35, 0.5, 0.65)
+eo_list_out_4 <- get_list_of_lists_of_log_values(goal_function = my_goal_function, pop_size = 100,
+                                                 success_treshold = 0.025, a = 0.3,
+                                                 k_max = 4, tournament_part = my_tournament_part,
+                                                 M = 15, max_iter = 1000, max_f_calls = 10000) # PC 3 h?
+#save(eo_list_out_4, file="data/eo_list_out_4.Rdata") # UWAGA! nie nadpisac!
+load("data/eo_list_out_4.Rdata")
+
+
+eo_list_out_4_appended <- append_the_list(eo_list_out_4, list(mh_list, mc_list,
+                                                              bg_start_id_list))
+
+plot_ecdf(eo_list_out_4_appended, min_val = f_val_med, max_val = f_val_max, reference_line = f_val_id,
+          legend_text = c(paste0("tournament_part = ", my_tournament_part), "MH", "MC", "BG_id"), legend_cex = 0.9)
+# the best is tournament_part = 0.5
+
+
+
+
+# 5. Start tuning for success_treshold:
+set.seed(1234)
+my_success_treshold <- c(0.011, 0.021, 0.031, 0.041, 0.051)
+eo_list_out_5 <- get_list_of_lists_of_log_values(goal_function = my_goal_function, pop_size = 100,
+                                                 success_treshold = my_success_treshold, a = 0.3,
+                                                 k_max = 4, tournament_part = 0.5,
+                                                 M = 15, max_iter = 1000, max_f_calls = 10000) # PC 3 h 20 min?
+#save(eo_list_out_5, file="data/eo_list_out_5.Rdata") # UWAGA! nie nadpisac!
+load("data/eo_list_out_5.Rdata")
+
+
+eo_list_out_5_appended <- append_the_list(eo_list_out_5, list(mh_list, mc_list,
+                                                              bg_start_id_list))
+
+plot_ecdf(eo_list_out_5_appended, min_val = f_val_med, max_val = f_val_max, reference_line = f_val_id,
+          legend_text = c(paste0("success_treshold = ", my_success_treshold), "MH", "MC", "BG_id"), legend_cex = 0.9)
+# the best is success_treshold = 0.031
 
 
 
