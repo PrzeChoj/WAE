@@ -71,6 +71,8 @@ eo_list_out_1_appended <- append_the_list(eo_list_out_1, list(mh_list, mc_list,
 
 plot_ecdf_list(eo_list_out_1_appended, paste0("a = ", my_a))
 # the best is a = 0.3
+plot_ecdf_list_single(eo_list_out_1[[2]])
+
 
 
 
@@ -89,7 +91,9 @@ eo_list_out_2_appended <- append_the_list(eo_list_out_2, list(mh_list, mc_list,
                                                               bg_start_id_list))
 
 plot_ecdf_list(eo_list_out_2_appended, paste0("k_max = ", my_k_max), legend_cex = 0.8)
-# the best is k_max = 4, but k = 1 is very close. It may be due to deviation.
+# the best is k_max = 4, but k = 1 is very close
+plot_ecdf_list_single(eo_list_out_2[[4]]) # unstable results
+
 
 
 
@@ -109,6 +113,9 @@ eo_list_out_3_appended <- append_the_list(eo_list_out_3, list(mh_list, mc_list,
 
 plot_ecdf_list(eo_list_out_3_appended, paste0("pop_size = ", my_pop_size), legend_cex = 0.9)
 # the best is pop_size = 100; as we used to. pop_size = 150 is very close
+plot_ecdf_list_single(eo_list_out_3[[4]]) # unstable results
+plot_ecdf_list_single(eo_list_out_3[[1]]) # transparently worse results
+plot_ecdf_list_single(eo_list_out_3[[6]]) # transparently worse results
 
 
 
@@ -129,6 +136,8 @@ eo_list_out_4_appended <- append_the_list(eo_list_out_4, list(mh_list, mc_list,
 
 plot_ecdf_list(eo_list_out_4_appended, paste0("tournament_part = ", my_tournament_part), legend_cex = 0.9)
 # the best is tournament_part = 0.5
+plot_ecdf_list_single(eo_list_out_4[[4]]) # 0.35; good results
+plot_ecdf_list_single(eo_list_out_4[[3]]) # 0.2 ; bad results
 
 
 
@@ -149,6 +158,8 @@ eo_list_out_5_appended <- append_the_list(eo_list_out_5, list(mh_list, mc_list,
 
 plot_ecdf_list(eo_list_out_5_appended, paste0("success_treshold = ", my_success_treshold), legend_cex = 0.9)
 # the best is success_treshold = 0.031
+plot_ecdf_list_single(eo_list_out_5[[3]]) # 0.31; good results
+plot_ecdf_list_single(eo_list_out_5[[4]]) # 0.41; good results too
 
 
 
@@ -167,8 +178,14 @@ load("data/eo_list_out_6.Rdata")
 eo_list_out_6_appended <- append_the_list(eo_list_out_6, list(mh_list, mc_list,
                                                               bg_start_id_list))
 
-plot_ecdf_list(eo_list_out_6_appended, paste0("initization method = ", my_init))
+par(mfrow = c(2,2))
+plot_ecdf_list(eo_list_out_6_appended, paste0("initization method = ", my_init), legend_cex = 0.55)
 # The lines are very close for this budget. Try with bigger budget:
+plot_ecdf_list_single(eo_list_out_6[[1]])
+plot_ecdf_list_single(eo_list_out_6[[2]])
+plot_ecdf_list_single(eo_list_out_6[[3]])
+par(mfrow = c(1,1))
+
 
 
 
