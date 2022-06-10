@@ -69,8 +69,7 @@ load("data/eo_list_out_1.Rdata")
 eo_list_out_1_appended <- append_the_list(eo_list_out_1, list(mh_list, mc_list,
                                                               bg_start_id_list))
 
-plot_ecdf(eo_list_out_1_appended, min_val = f_val_med, max_val = f_val_max, reference_line = f_val_id,
-          legend_text = c(paste0("a = ", my_a), "MH", "MC", "BG_id"))
+plot_ecdf_list(eo_list_out_1_appended, paste0("a = ", my_a))
 # the best is a = 0.3
 
 
@@ -89,9 +88,8 @@ load("data/eo_list_out_2.Rdata")
 eo_list_out_2_appended <- append_the_list(eo_list_out_2, list(mh_list, mc_list,
                                                               bg_start_id_list))
 
-plot_ecdf(eo_list_out_2_appended, min_val = f_val_med, max_val = f_val_max, reference_line = f_val_id,
-          legend_text = c(paste0("k_max = ", my_k_max), "MH", "MC", "BG_id"), legend_cex = 0.8)
-# the best is k_max = 4
+plot_ecdf_list(eo_list_out_2_appended, paste0("k_max = ", my_k_max), legend_cex = 0.8)
+# the best is k_max = 4, but k = 1 is very close. It may be due to deviation.
 
 
 
@@ -109,9 +107,8 @@ load("data/eo_list_out_3.Rdata")
 eo_list_out_3_appended <- append_the_list(eo_list_out_3, list(mh_list, mc_list,
                                                               bg_start_id_list))
 
-plot_ecdf(eo_list_out_3_appended, min_val = f_val_med, max_val = f_val_max, reference_line = f_val_id,
-          legend_text = c(paste0("pop_size = ", my_pop_size), "MH", "MC", "BG_id"), legend_cex = 0.9)
-# the best is pop_size = 100; as we used to
+plot_ecdf_list(eo_list_out_3_appended, paste0("pop_size = ", my_pop_size), legend_cex = 0.9)
+# the best is pop_size = 100; as we used to. pop_size = 150 is very close
 
 
 
@@ -130,8 +127,7 @@ load("data/eo_list_out_4.Rdata")
 eo_list_out_4_appended <- append_the_list(eo_list_out_4, list(mh_list, mc_list,
                                                               bg_start_id_list))
 
-plot_ecdf(eo_list_out_4_appended, min_val = f_val_med, max_val = f_val_max, reference_line = f_val_id,
-          legend_text = c(paste0("tournament_part = ", my_tournament_part), "MH", "MC", "BG_id"), legend_cex = 0.9)
+plot_ecdf_list(eo_list_out_4_appended, paste0("tournament_part = ", my_tournament_part), legend_cex = 0.9)
 # the best is tournament_part = 0.5
 
 
@@ -151,8 +147,7 @@ load("data/eo_list_out_5.Rdata")
 eo_list_out_5_appended <- append_the_list(eo_list_out_5, list(mh_list, mc_list,
                                                               bg_start_id_list))
 
-plot_ecdf(eo_list_out_5_appended, min_val = f_val_med, max_val = f_val_max, reference_line = f_val_id,
-          legend_text = c(paste0("success_treshold = ", my_success_treshold), "MH", "MC", "BG_id"), legend_cex = 0.9)
+plot_ecdf_list(eo_list_out_5_appended, paste0("success_treshold = ", my_success_treshold), legend_cex = 0.9)
 # the best is success_treshold = 0.031
 
 
@@ -172,9 +167,27 @@ load("data/eo_list_out_6.Rdata")
 eo_list_out_6_appended <- append_the_list(eo_list_out_6, list(mh_list, mc_list,
                                                               bg_start_id_list))
 
-plot_ecdf(eo_list_out_6_appended, min_val = f_val_med, max_val = f_val_max, reference_line = f_val_id,
-          legend_text = c(paste0("initization method = ", my_init), "MH", "MC", "BG_id"), legend_cex = 0.9)
-# the best is init = ? are very close for this budget
+plot_ecdf_list(eo_list_out_6_appended, paste0("initization method = ", my_init))
+# The lines are very close for this budget. Try with bigger budget:
+
+
+
+# 7. Start tuning for init method (bigger budget):
+set.seed(1234)
+my_init <- c("random", "random_close", "id_close")
+eo_list_out_7 <- get_list_of_lists_of_log_values(goal_function = my_goal_function, pop_size = 100,
+                                                 success_treshold = 0.031, a = 0.3,
+                                                 k_max = 4, tournament_part = 0.5, init = my_init,
+                                                 M = 5, max_iter = 1000, max_f_calls = 100000) # PC 4? h
+#save(eo_list_out_7, file="data/eo_list_out_7.Rdata") # UWAGA! nie nadpisac!
+load("data/eo_list_out_7.Rdata")
+
+
+eo_list_out_7_appended <- append_the_list(eo_list_out_7, list(mh_list, mc_list,
+                                                              bg_start_id_list))
+
+plot_ecdf_list(eo_list_out_7_appended, paste0("initization method = ", my_init))
+# the best is init = ?
 
 
 
