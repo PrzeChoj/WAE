@@ -158,4 +158,24 @@ plot_ecdf(eo_list_out_5_appended, min_val = f_val_med, max_val = f_val_max, refe
 
 
 
+# 6. Start tuning for init method:
+set.seed(1234)
+my_init <- c("random", "random_close", "id_close")
+eo_list_out_6 <- get_list_of_lists_of_log_values(goal_function = my_goal_function, pop_size = 100,
+                                                 success_treshold = 0.031, a = 0.3,
+                                                 k_max = 4, tournament_part = 0.5, init = my_init,
+                                                 M = 15, max_iter = 1000, max_f_calls = 10000) # PC 70 min
+#save(eo_list_out_6, file="data/eo_list_out_6.Rdata") # UWAGA! nie nadpisac!
+load("data/eo_list_out_6.Rdata")
+
+
+eo_list_out_6_appended <- append_the_list(eo_list_out_6, list(mh_list, mc_list,
+                                                              bg_start_id_list))
+
+plot_ecdf(eo_list_out_6_appended, min_val = f_val_med, max_val = f_val_max, reference_line = f_val_id,
+          legend_text = c(paste0("initization method = ", my_init), "MH", "MC", "BG_id"), legend_cex = 0.9)
+# the best is init = ? are very close for this budget
+
+
+
 

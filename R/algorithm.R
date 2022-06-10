@@ -15,7 +15,7 @@ evolutional_optimization <- function(my_goal_function, max_iter=100, pop_size=15
                                      success_treshold=0.025, p_0=0.5,
                                      a=1, k_max=1,
                                      tournament_part=0.5,
-                                     max_f_calls=Inf,
+                                     max_f_calls=Inf, init = "random",
                                      show_progress_bar=TRUE){
   if(show_progress_bar)
     progressBar <- utils::txtProgressBar(min = 0, max = max_iter, initial = 1)
@@ -25,7 +25,8 @@ evolutional_optimization <- function(my_goal_function, max_iter=100, pop_size=15
             p_0 <= 1,
             p_0 >= 0,
             a >= 0,
-            max_f_calls > 1)
+            max_f_calls > 1,
+            init %in% c("random", "random_close", "id_close"))
   tournament_size <- ceiling(tournament_part * pop_size)
   
   perm_size <- dim(attr(my_goal_function, "U"))[1]
@@ -47,12 +48,43 @@ evolutional_optimization <- function(my_goal_function, max_iter=100, pop_size=15
   
   # init population
   population <- list()
-  # TODO(start with an identity)
-  #population[[1]] <- permutations::id # start with an identity
-  #f_values[1] <- my_goal_function(population[[1]])
-  for(i in 1:pop_size){
-    population[[i]] <- runif_perm(perm_size)
-    f_values[i] <- my_goal_function(population[[i]])
+  if(init == "random"){
+    for(i in 1:pop_size){
+      population[[i]] <- runif_perm(perm_size)
+      f_values[i] <- my_goal_function(population[[i]])
+    }
+  }else if(init == "id_close"){
+    for(i in 1:pop_size){
+      population[[i]] <- as.cycle(permutations::id * runif_transposition(perm_size)) # 1st neighbout
+    }
+    for(i in 1:(ceiling(2/3*pop_size))){
+      population[[i]] <- as.cycle(permutations::id * runif_transposition(perm_size)) # 2nd neighbout
+    }
+    for(i in 1:(ceiling(1/3*pop_size))){
+      population[[i]] <- as.cycle(permutations::id * runif_transposition(perm_size)) # 3rd neighbout
+    }
+    
+    
+    for(i in 1:pop_size){
+      f_values[i] <- my_goal_function(population[[i]]) # evaluation
+    }
+  }else if(init == "random_close"){
+    population[[1]] <- runif_perm(perm_size) # initial perm
+    
+    for(i in 2:pop_size){
+      population[[i]] <- as.cycle(permutations::id * runif_transposition(perm_size)) # 1st neighbout
+    }
+    for(i in 2:max(ceiling(2/3*pop_size), pop_size)){
+      population[[i]] <- as.cycle(permutations::id * runif_transposition(perm_size)) # 2nd neighbout
+    }
+    for(i in 2:max(ceiling(1/3*pop_size), pop_size)){
+      population[[i]] <- as.cycle(permutations::id * runif_transposition(perm_size)) # 3rd neighbout
+    }
+    
+    
+    for(i in 1:pop_size){
+      f_values[i] <- my_goal_function(population[[i]]) # evaluation
+    }
   }
   goal_function_logvalues <- f_values
   best_f_value_list <- max(f_values)

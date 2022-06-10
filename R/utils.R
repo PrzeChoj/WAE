@@ -177,10 +177,10 @@ append_the_list <- function(initial_list, additional_lists){
 }
 
 
-#' Mozna testowac `pop_size`, `success_treshold`, `a`, `k_max`, `tournament_part`
+#' Mozna testowac `pop_size`, `success_treshold`, `a`, `k_max`, `tournament_part`, `init`
 get_list_of_lists_of_log_values <- function(goal_function, pop_size, success_treshold, a,
-                                            k_max, tournament_part, M, max_iter, max_f_calls=Inf,
-                                            print_progress = TRUE){
+                                            k_max, tournament_part, M, max_iter, init="random",
+                                            max_f_calls=Inf, print_progress = TRUE){
   if(print_progress){
     start_time <- Sys.time()
   }
@@ -189,7 +189,8 @@ get_list_of_lists_of_log_values <- function(goal_function, pop_size, success_tre
                   length(success_treshold) > 1,
                   length(a) > 1,
                   length(k_max) > 1,
-                  length(tournament_part) > 1)) == 1)
+                  length(tournament_part) > 1,
+                  length(init) > 1)) == 1)
   
   list_of_lists_of_log_values <- list()
   
@@ -203,6 +204,8 @@ get_list_of_lists_of_log_values <- function(goal_function, pop_size, success_tre
     number_of_loops <- length(k_max)
   }else if(length(tournament_part) > 1){
     number_of_loops <- length(tournament_part)
+  }else if(length(init) > 1){
+    number_of_loops <- length(init)
   }
   
   progressBar_iterations <- number_of_loops * M
@@ -223,6 +226,7 @@ get_list_of_lists_of_log_values <- function(goal_function, pop_size, success_tre
       a_i <- a
       k_max_i <- k_max
       tournament_part_i <- tournament_part
+      init_i <- init
       
       if(length(pop_size) > 1){
         pop_size_i <- pop_size[i]
@@ -234,12 +238,15 @@ get_list_of_lists_of_log_values <- function(goal_function, pop_size, success_tre
         k_max_i <- k_max[i]
       }else if(length(tournament_part) > 1){
         tournament_part_i <- tournament_part[i]
+      }else if(length(init) > 1){
+        init_i <- init[i]
       }
       
       eo <- evolutional_optimization(goal_function, max_iter=max_iter, pop_size=pop_size_i,
                                      success_treshold=success_treshold_i, p_0=0.5,
                                      a=a_i, k_max=k_max_i,
                                      tournament_part=tournament_part_i,
+                                     init=init_i,
                                      max_f_calls = max_f_calls,
                                      show_progress_bar=FALSE)
         
