@@ -180,26 +180,25 @@ eo_list_out_7 <- get_list_of_lists_of_log_values(goal_function = my_goal_functio
 ###################### experiment 2
 
 
-#### TODO(From this point):
 # 1. Start tuning for a:
 set.seed(1234)
 my_a <- c(0.1, 0.3, 0.5, 1)
 eo_list_out_1 <- get_list_of_lists_of_log_values(goal_function = my_goal_function, pop_size = 100,
                                                  success_treshold = 0.031, a = my_a,
                                                  k_max = 4, tournament_part = 0.5,
-                                                 M = 10, max_iter = 100) # PC 70 min
+                                                 M = 10, max_iter = 100, init = "random_close") # PC 60 min
 #save(eo_list_out_1, file=paste0("data/experiment", perform_experiment, "/eo_list_out_1.Rdata")) # CAUTIOUSLY! Not to overwrite!
 
 
 
-
+#### TODO(From this point):
 # 2. Start tuning for k_max:
 set.seed(1234)
 my_k_max <- c(1, 2, 3, 4, 7, 14, 20)
 eo_list_out_2 <- get_list_of_lists_of_log_values(goal_function = my_goal_function, pop_size = 100,
-                                                 success_treshold = 0.025, a = 0.3,
+                                                 success_treshold = 0.031, a = 0.3,
                                                  k_max = my_k_max, tournament_part = 0.5,
-                                                 M = 30, max_iter = 100) # PC 6 hours 20 minutes
+                                                 M = 10, max_iter = 100, init = "random_close") # PC 2 hours 10 minutes
 #save(eo_list_out_2, file=paste0("data/experiment", perform_experiment, "/eo_list_out_2.Rdata")) # CAUTIOUSLY! Not to overwrite!
 
 
@@ -208,9 +207,10 @@ eo_list_out_2 <- get_list_of_lists_of_log_values(goal_function = my_goal_functio
 set.seed(1234)
 my_pop_size <- c(10, 30, 70, 100, 150, 200)
 eo_list_out_3 <- get_list_of_lists_of_log_values(goal_function = my_goal_function, pop_size = my_pop_size,
-                                                 success_treshold = 0.025, a = 0.3,
+                                                 success_treshold = 0.031, a = 0.3,
                                                  k_max = 4, tournament_part = 0.5,
-                                                 M = 10, max_iter = 1000, max_f_calls = 10000) # PC 2 h
+                                                 M = 10, max_iter = 1000, max_f_calls = 10000,
+                                                 init = "random_close") # PC 2 h
 #save(eo_list_out_3, file=paste0("data/experiment", perform_experiment, "/eo_list_out_3.Rdata")) # CAUTIOUSLY! Not to overwrite!
 
 
@@ -219,7 +219,7 @@ eo_list_out_3 <- get_list_of_lists_of_log_values(goal_function = my_goal_functio
 set.seed(1234)
 my_tournament_part <- c(0.07, 0.11, 0.2, 0.35, 0.5, 0.65)
 eo_list_out_4 <- get_list_of_lists_of_log_values(goal_function = my_goal_function, pop_size = 100,
-                                                 success_treshold = 0.025, a = 0.3,
+                                                 success_treshold = 0.031, a = 0.3,
                                                  k_max = 4, tournament_part = my_tournament_part,
                                                  M = 15, max_iter = 1000, max_f_calls = 10000) # PC 3 h
 #save(eo_list_out_4, file=paste0("data/experiment", perform_experiment, "/eo_list_out_4.Rdata")) # CAUTIOUSLY! Not to overwrite!
@@ -232,7 +232,8 @@ my_success_treshold <- c(0.011, 0.021, 0.031, 0.041, 0.051)
 eo_list_out_5 <- get_list_of_lists_of_log_values(goal_function = my_goal_function, pop_size = 100,
                                                  success_treshold = my_success_treshold, a = 0.3,
                                                  k_max = 4, tournament_part = 0.5,
-                                                 M = 15, max_iter = 1000, max_f_calls = 10000) # PC 3 h 20 min
+                                                 M = 15, max_iter = 1000, max_f_calls = 10000,
+                                                 init = "random_close") # PC 3 h 20 min
 #save(eo_list_out_5, file=paste0("data/experiment", perform_experiment, "/eo_list_out_5.Rdata")) # CAUTIOUSLY! Not to overwrite!
 
 

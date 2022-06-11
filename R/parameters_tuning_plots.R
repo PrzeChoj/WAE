@@ -38,7 +38,7 @@ if(perform_experiment == "1"){
 
 # prod(1:perm_size) / 100 / 60 / 60  # liczba godzin potrzebnych do przejrzenia calej dziedziny
 
-my_goal_function <- goal_function_maker(perm_size, n_number)
+my_goal_function <- goal_function_maker(perm_size, n_number, sigma = sigma_matrix)
 U <- attr(my_goal_function, "U")
 
 (f_val_max <- my_goal_function(perm_real)) # 1 --->>> 173.8; 2 --->>> 56.00
@@ -47,7 +47,7 @@ U <- attr(my_goal_function, "U")
 
 # Reference algorithms:
 load(paste0("data/experiment", perform_experiment, "/mh_list1e4.Rdata"))
-load(paste0("data/experiment", perform_experiment, "/mh_list1e5.Rdata"))
+load(paste0("data/experiment", perform_experiment, "/mh_list1e5.Rdata")) # TODO(for experiment 2)
 load(paste0("data/experiment", perform_experiment, "/mc_list.Rdata"))
 load(paste0("data/experiment", perform_experiment, "/bg_start_id_list.Rdata"))
 
@@ -211,11 +211,10 @@ par(mfrow = c(1,1))
 
 
 
-###################### experiment 1
+###################### experiment 2
 
 
 
-#### TODO(From this point):
 # 1. a:
 my_a <- c(0.1, 0.3, 0.5, 1)
 load(paste0("data/experiment", perform_experiment, "/eo_list_out_1.Rdata"))
@@ -224,14 +223,14 @@ eo_list_out_1_appended <- append_the_list(eo_list_out_1, list(mh_list1e4, mc_lis
                                                               bg_start_id_list))
 
 plot_ecdf_list(eo_list_out_1_appended, paste0("a = ", my_a), experiment = perform_experiment)
-# the best is a = 0.3
+# the best is a = 0.3; the same conclusion as in experiment 1
 plot_ecdf_list_single(eo_list_out_1[[2]],
-                      my_title = paste0("ECDF plot: a = ",
-                                        my_a[2]), experiment = perform_experiment)
+                      my_title = paste0("ECDF plot: a = ", my_a[2]),
+                      experiment = perform_experiment)
 
 
 
-
+#### TODO(From this point):
 # 2. k_max:
 my_k_max <- c(1, 2, 3, 4, 7, 14, 20)
 load(paste0("data/experiment", perform_experiment, "/eo_list_out_2.Rdata"))
