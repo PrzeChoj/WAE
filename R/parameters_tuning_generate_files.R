@@ -203,7 +203,7 @@ eo_list_out_2 <- get_list_of_lists_of_log_values(goal_function = my_goal_functio
 
 
 
-#### TODO(From this point):
+
 # 3. Start tuning for pop_size:
 set.seed(1234)
 my_pop_size <- c(10, 30, 70, 100, 150, 200)
@@ -211,11 +211,12 @@ eo_list_out_3 <- get_list_of_lists_of_log_values(goal_function = my_goal_functio
                                                  success_treshold = 0.031, a = 0.3,
                                                  k_max = 7, tournament_part = 0.5,
                                                  M = 10, max_iter = 1000, max_f_calls = 10000,
-                                                 init = "random_close") # PC 2 h
+                                                 init = "random_close") # PC 2 h 15 min
 #save(eo_list_out_3, file=paste0("data/experiment", perform_experiment, "/eo_list_out_3.Rdata")) # CAUTIOUSLY! Not to overwrite!
 
 
 
+#### TODO(From this point):
 # 4. Start tuning for tournament_part:
 set.seed(1234)
 my_tournament_part <- c(0.07, 0.11, 0.2, 0.35, 0.5, 0.65)
