@@ -182,7 +182,7 @@ append_the_list <- function(initial_list, additional_lists){
 
 plot_ecdf_list <- function(list_of_lists_f_vals, legent_additional_text = "", legend_cex=1, show_legend = TRUE,
                            my_title = "ECDF plot"){
-  # values from parameter_tuning.R:
+  # values from parameter_tuning_generate_files.R:
   f_val_max <- 173.8259  # my_goal_function(perm_real)
   f_val_id <- 79.51006   # my_goal_function(permutations::id)
   f_val_med <- -1.023756 # median(mc_list[[1]])
