@@ -63,19 +63,19 @@ set.seed(1234)
 mc_list <- get_list_of_log_values_MC(my_goal_function, max_iter = 10000, M = 100) # PC 70 min
 #save(mc_list, file=paste0("data/experiment", perform_experiment, "/mc_list.Rdata")) # CAUTIOUSLY! Not to overwrite!
 
-f_val_min <- 1:length(mc_list) %>% sapply(function(i){min(mc_list[[i]])}) %>% min # smallest of drawn values
-f_val_med <- median(mc_list[[1]]) # median of first part of drawn values
+(f_val_min <- 1:length(mc_list) %>% sapply(function(i){min(mc_list[[i]])}) %>% min) # smallest of drawn values
+(f_val_med <- median(mc_list[[1]])) # median of first part of drawn values
 
 
 # BG for reference
 set.seed(1234)
 bg_start_id_list <- list(best_growth(attr(my_goal_function, "U"), n_number = attr(my_goal_function, "n"),
-                                     max_iter = 20)[["goal_function_logvalues"]]) # max_iter == 14 is enough; bg_start_id is NOT random; PC 1 min
+                                     max_iter = 100)[["goal_function_logvalues"]]) # max_iter == 14 is enough; bg_start_id is NOT random; PC 1 min
 #save(bg_start_id_list, file=paste0("data/experiment", perform_experiment, "/bg_start_id_list.Rdata")) # CAUTIOUSLY! Not to overwrite!
 
 set.seed(1234)
 # Use this with caution!!! It is incredibly hard to interpret! Only part of the length of the line is sensible!
-bg_start_random_list <- get_list_of_log_values_BG(my_goal_function, max_iter = 100, M = 100) # PC 27 min
+#bg_start_random_list <- get_list_of_log_values_BG(my_goal_function, max_iter = 100, M = 100) # PC 27 min
 #save(bg_start_random_list, file=paste0("data/experiment", perform_experiment, "/bg_start_random_list.Rdata")) # CAUTIOUSLY! Not to overwrite!
 #bg_start_random_list_mean <- make_BG_mean(bg_start_random_list) # Use this with caution!!! It is incredibly hard to interpret! Only part of the length of the line is sensible!
 
@@ -85,7 +85,12 @@ bg_start_random_list <- get_list_of_log_values_BG(my_goal_function, max_iter = 1
 
 # Tuning parameters
 
-# 1. Start with small tuning for a:
+
+
+
+###################### experiment 1
+
+# 1. Start tuning for a:
 set.seed(1234)
 my_a <- c(0.1, 0.3, 0.5, 1)
 eo_list_out_1 <- get_list_of_lists_of_log_values(goal_function = my_goal_function, pop_size = 100,
@@ -93,6 +98,98 @@ eo_list_out_1 <- get_list_of_lists_of_log_values(goal_function = my_goal_functio
                                                  k_max = 5, tournament_part = 0.5,
                                                  M = 10, max_iter = 100) # PC 70 min
 #save(eo_list_out_1, file=paste0("data/experiment", perform_experiment, "/eo_list_out_1.Rdata")) # CAUTIOUSLY! Not to overwrite!
+
+
+
+# 2. Start tuning for k_max:
+set.seed(1234)
+my_k_max <- c(1, 2, 3, 4, 7, 14, 20)
+eo_list_out_2 <- get_list_of_lists_of_log_values(goal_function = my_goal_function, pop_size = 100,
+                                                 success_treshold = 0.025, a = 0.3,
+                                                 k_max = my_k_max, tournament_part = 0.5,
+                                                 M = 30, max_iter = 100) # PC 6 hours 20 minutes
+#save(eo_list_out_2, file=paste0("data/experiment", perform_experiment, "/eo_list_out_2.Rdata")) # CAUTIOUSLY! Not to overwrite!
+
+
+
+# 3. Start tuning for pop_size:
+set.seed(1234)
+my_pop_size <- c(10, 30, 70, 100, 150, 200)
+eo_list_out_3 <- get_list_of_lists_of_log_values(goal_function = my_goal_function, pop_size = my_pop_size,
+                                                 success_treshold = 0.025, a = 0.3,
+                                                 k_max = 4, tournament_part = 0.5,
+                                                 M = 10, max_iter = 1000, max_f_calls = 10000) # PC 2 h
+#save(eo_list_out_3, file=paste0("data/experiment", perform_experiment, "/eo_list_out_3.Rdata")) # CAUTIOUSLY! Not to overwrite!
+
+
+
+# 4. Start tuning for tournament_part:
+set.seed(1234)
+my_tournament_part <- c(0.07, 0.11, 0.2, 0.35, 0.5, 0.65)
+eo_list_out_4 <- get_list_of_lists_of_log_values(goal_function = my_goal_function, pop_size = 100,
+                                                 success_treshold = 0.025, a = 0.3,
+                                                 k_max = 4, tournament_part = my_tournament_part,
+                                                 M = 15, max_iter = 1000, max_f_calls = 10000) # PC 3 h
+#save(eo_list_out_4, file=paste0("data/experiment", perform_experiment, "/eo_list_out_4.Rdata")) # CAUTIOUSLY! Not to overwrite!
+
+
+
+# 5. Start tuning for success_treshold:
+set.seed(1234)
+my_success_treshold <- c(0.011, 0.021, 0.031, 0.041, 0.051)
+eo_list_out_5 <- get_list_of_lists_of_log_values(goal_function = my_goal_function, pop_size = 100,
+                                                 success_treshold = my_success_treshold, a = 0.3,
+                                                 k_max = 4, tournament_part = 0.5,
+                                                 M = 15, max_iter = 1000, max_f_calls = 10000) # PC 3 h 20 min
+#save(eo_list_out_5, file=paste0("data/experiment", perform_experiment, "/eo_list_out_5.Rdata")) # CAUTIOUSLY! Not to overwrite!
+
+
+
+# 6. Start tuning for init method:
+set.seed(1234)
+my_init <- c("random", "random_close", "id_close")
+eo_list_out_6 <- get_list_of_lists_of_log_values(goal_function = my_goal_function, pop_size = 100,
+                                                 success_treshold = 0.031, a = 0.3,
+                                                 k_max = 4, tournament_part = 0.5, init = my_init,
+                                                 M = 15, max_iter = 1000, max_f_calls = 10000) # PC 70 min
+#save(eo_list_out_6, file=paste0("data/experiment", perform_experiment, "/eo_list_out_6.Rdata")) # CAUTIOUSLY! Not to overwrite!
+
+
+
+# 7. Start tuning for init method (bigger budget):
+set.seed(1234)
+my_init <- c("random", "random_close", "id_close")
+eo_list_out_7 <- get_list_of_lists_of_log_values(goal_function = my_goal_function, pop_size = 100,
+                                                 success_treshold = 0.031, a = 0.3,
+                                                 k_max = 4, tournament_part = 0.5, init = my_init,
+                                                 M = 5, max_iter = 1000, max_f_calls = 100000) # PC 3 h 50 min
+#save(eo_list_out_7, file=paste0("data/experiment", perform_experiment, "/eo_list_out_7.Rdata")) # CAUTIOUSLY! Not to overwrite!
+
+
+
+
+
+
+
+
+
+
+########################################################################################################################
+
+
+###################### experiment 2
+
+
+#### TODO(From this point):
+# 1. Start tuning for a:
+set.seed(1234)
+my_a <- c(0.1, 0.3, 0.5, 1)
+eo_list_out_1 <- get_list_of_lists_of_log_values(goal_function = my_goal_function, pop_size = 100,
+                                                 success_treshold = 0.031, a = my_a,
+                                                 k_max = 4, tournament_part = 0.5,
+                                                 M = 10, max_iter = 100) # PC 70 min
+#save(eo_list_out_1, file=paste0("data/experiment", perform_experiment, "/eo_list_out_1.Rdata")) # CAUTIOUSLY! Not to overwrite!
+
 
 
 
