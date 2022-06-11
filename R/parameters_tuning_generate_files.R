@@ -228,10 +228,10 @@ eo_list_out_4 <- get_list_of_lists_of_log_values(goal_function = my_goal_functio
 
 
 
-#### TODO(From this point):
+
 # 5. Start tuning for success_treshold:
 set.seed(1234)
-my_success_treshold <- c(0.011, 0.021, 0.031, 0.041, 0.051)
+my_success_treshold <- c(0.011, 0.021, 0.031, 0.051, 0.071) # Different from experiment 1 (0.041 --->>> 0.071), because those in exp 1 were very close togather
 eo_list_out_5 <- get_list_of_lists_of_log_values(goal_function = my_goal_function, pop_size = 100,
                                                  success_treshold = my_success_treshold, a = 0.3,
                                                  k_max = 7, tournament_part = 0.35,
@@ -241,6 +241,7 @@ eo_list_out_5 <- get_list_of_lists_of_log_values(goal_function = my_goal_functio
 
 
 
+#### TODO(From this point):
 # 6. Start tuning for init method:
 set.seed(1234)
 my_init <- c("random", "random_close", "id_close")

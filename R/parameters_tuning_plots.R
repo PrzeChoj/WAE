@@ -305,9 +305,9 @@ par(mfrow = c(1,1))
 
 
 
-#### TODO(From this point):
+
 # 5. success_treshold:
-my_success_treshold <- c(0.011, 0.021, 0.031, 0.041, 0.051)
+my_success_treshold <- c(0.011, 0.021, 0.031, 0.051, 0.071)
 load(paste0("data/experiment", perform_experiment, "/eo_list_out_5.Rdata"))
 
 eo_list_out_5_appended <- append_the_list(eo_list_out_5, list(mh_list1e4, mc_list,
@@ -323,14 +323,15 @@ plot_ecdf_list_single(eo_list_out_5[[1]], # 0.11; bad results
 plot_ecdf_list_single(eo_list_out_5[[3]], # 0.31; good results
                       my_title = paste0("ECDF plot: success_treshold = ", my_success_treshold[3]),
                       experiment = perform_experiment)
-plot_ecdf_list_single(eo_list_out_5[[4]], # 0.41; good results too
-                      my_title = paste0("ECDF plot: success_treshold = ", my_success_treshold[4]),
+plot_ecdf_list_single(eo_list_out_5[[5]], # 0.71; good results too; same lines excelent, some less lucky..
+                      my_title = paste0("ECDF plot: success_treshold = ", my_success_treshold[5]),
                       experiment = perform_experiment)
 par(mfrow = c(1,1))
 
 
 
 
+#### TODO(From this point):
 # 6. init method:
 my_init <- c("random", "random_close", "id_close")
 load(paste0("data/experiment", perform_experiment, "/eo_list_out_6.Rdata"))
