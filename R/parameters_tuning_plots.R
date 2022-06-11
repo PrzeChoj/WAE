@@ -279,7 +279,7 @@ par(mfrow = c(1,1))
 
 
 
-#### TODO(From this point):
+
 # 4. tournament_part:
 my_tournament_part <- c(0.07, 0.11, 0.2, 0.35, 0.5, 0.65)
 load(paste0("data/experiment", perform_experiment, "/eo_list_out_4.Rdata"))
@@ -291,24 +291,21 @@ par(mfrow = c(2,2))
 plot_ecdf_list(eo_list_out_4_appended, paste0("tournament_part = ", my_tournament_part), legend_cex = 0.4,
                experiment = perform_experiment)
 # the best is tournament_part = 0.5
-plot_ecdf_list_single(eo_list_out_4[[5]], # 0.5; good results
-                      my_title = paste0("ECDF plot: tournament_part = ", my_tournament_part[5]),
+plot_ecdf_list_single(eo_list_out_4[[3]], # 0.2
+                      my_title = paste0("ECDF plot: tournament_part = ", my_tournament_part[3]),
                       experiment = perform_experiment)
-plot_ecdf_list_single(eo_list_out_4[[4]], # 0.35; good results
+plot_ecdf_list_single(eo_list_out_4[[4]], # 0.35; najlepsze wyniki i najmniejsze rozproszenie
                       my_title = paste0("ECDF plot: tournament_part = ", my_tournament_part[4]),
                       experiment = perform_experiment)
-plot_ecdf_list_single(eo_list_out_4[[3]], # 0.2 ; bad results
-                      my_title = paste0("ECDF plot: tournament_part = ", my_tournament_part[3]),
+plot_ecdf_list_single(eo_list_out_4[[5]], # 0.5; w miarę ok wyniki, ale duże rozproszenie
+                      my_title = paste0("ECDF plot: tournament_part = ", my_tournament_part[5]),
                       experiment = perform_experiment)
 par(mfrow = c(1,1))
 
 
 
 
-
-
-
-
+#### TODO(From this point):
 # 5. success_treshold:
 my_success_treshold <- c(0.011, 0.021, 0.031, 0.041, 0.051)
 load(paste0("data/experiment", perform_experiment, "/eo_list_out_5.Rdata"))
