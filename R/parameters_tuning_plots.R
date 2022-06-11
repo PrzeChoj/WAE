@@ -230,7 +230,7 @@ plot_ecdf_list_single(eo_list_out_1[[2]],
 
 
 
-#### TODO(From this point):
+
 # 2. k_max:
 my_k_max <- c(1, 2, 3, 4, 7, 14, 20)
 load(paste0("data/experiment", perform_experiment, "/eo_list_out_2.Rdata"))
@@ -238,15 +238,15 @@ load(paste0("data/experiment", perform_experiment, "/eo_list_out_2.Rdata"))
 eo_list_out_2_appended <- append_the_list(eo_list_out_2, list(mh_list1e4, mc_list,
                                                               bg_start_id_list))
 
-plot_ecdf_list(eo_list_out_2_appended, paste0("k_max = ", my_k_max), legend_cex = 0.8)
-# the best is k_max = 4, but k = 1 is very close
+plot_ecdf_list(eo_list_out_2_appended, paste0("k_max = ", my_k_max), legend_cex = 0.8, experiment = perform_experiment)
+# the best is k_max = 7, but k = 20 is very close. Strange, k=20 is very random...
 plot_ecdf_list_single(eo_list_out_2[[4]], # unstable results
                       my_title = paste0("ECDF plot: k_max = ",
                                         my_k_max[4]))
 
 
 
-
+#### TODO(From this point):
 # 3. pop_size:
 my_pop_size <- c(10, 30, 70, 100, 150, 200)
 load(paste0("data/experiment", perform_experiment, "/eo_list_out_3.Rdata"))
