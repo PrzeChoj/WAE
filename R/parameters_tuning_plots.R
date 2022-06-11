@@ -340,7 +340,7 @@ eo_list_out_6_appended <- append_the_list(eo_list_out_6, list(mh_list1e4, mc_lis
                                                               bg_start_id_list))
 
 par(mfrow = c(2,2))
-plot_ecdf_list(eo_list_out_6_appended, paste0("initization method = ", my_init), legend_cex = 0.55)
+plot_ecdf_list(eo_list_out_6_appended, paste0("initization method = ", my_init), legend_cex = 0.55, experiment = perform_experiment)
 plot_ecdf_list_single(eo_list_out_6[[1]], my_title = paste0("ECDF plot: init ", my_init[1]), experiment = perform_experiment)
 plot_ecdf_list_single(eo_list_out_6[[2]], my_title = paste0("ECDF plot: init ", my_init[2]), experiment = perform_experiment)
 plot_ecdf_list_single(eo_list_out_6[[3]], my_title = paste0("ECDF plot: init ", my_init[3]), experiment = perform_experiment)

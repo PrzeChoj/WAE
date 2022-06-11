@@ -236,30 +236,31 @@ eo_list_out_5 <- get_list_of_lists_of_log_values(goal_function = my_goal_functio
                                                  success_treshold = my_success_treshold, a = 0.3,
                                                  k_max = 7, tournament_part = 0.35,
                                                  M = 10, max_iter = 1000, max_f_calls = 10000,
-                                                 init = "random_close") # PC 2 h 40 min ?
+                                                 init = "random_close") # PC 1 h 45 min
 #save(eo_list_out_5, file=paste0("data/experiment", perform_experiment, "/eo_list_out_5.Rdata")) # CAUTIOUSLY! Not to overwrite!
 
 
 
-#### TODO(From this point):
+
 # 6. Start tuning for init method:
 set.seed(1234)
 my_init <- c("random", "random_close", "id_close")
 eo_list_out_6 <- get_list_of_lists_of_log_values(goal_function = my_goal_function, pop_size = 100,
                                                  success_treshold = 0.031, a = 0.3,
                                                  k_max = 7, tournament_part = 0.35, init = my_init,
-                                                 M = 10, max_iter = 1000, max_f_calls = 10000) # PC 70 min ?
+                                                 M = 10, max_iter = 1000, max_f_calls = 10000) # PC 60 min
 #save(eo_list_out_6, file=paste0("data/experiment", perform_experiment, "/eo_list_out_6.Rdata")) # CAUTIOUSLY! Not to overwrite!
 
 
 
+#### TODO(From this point):
 # 7. Start tuning for init method (bigger budget):
 set.seed(1234)
 my_init <- c("random", "random_close", "id_close")
 eo_list_out_7 <- get_list_of_lists_of_log_values(goal_function = my_goal_function, pop_size = 100,
                                                  success_treshold = 0.031, a = 0.3,
                                                  k_max = 7, tournament_part = 0.35, init = my_init,
-                                                 M = 5, max_iter = 1000, max_f_calls = 100000) # PC 4 h 30 min ?
+                                                 M = 5, max_iter = 1000, max_f_calls = 100000) # PC 5 h ?
 #save(eo_list_out_7, file=paste0("data/experiment", perform_experiment, "/eo_list_out_7.Rdata")) # CAUTIOUSLY! Not to overwrite!
 
 
