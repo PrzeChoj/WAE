@@ -3,24 +3,53 @@ source("R/algorithm.R") # devtools::install_github("PrzeChoj/gips")
 
 set.seed(1234)
 
+perform_experiment <- "1"
+
 n_number <- 20
-perm_size <- 25
+if(perform_experiment == "1"){
+  perm_size <- 25
+  sigma_matrix <- NULL
+  
+  perm_real <- as.cycle(1:perm_size)
+}else if(perform_experiment == "2"){
+  perm_size <- 26
+  
+  # generate sigma matrix:
+  org_sigma_matrix <- sigma_maker(13)
+  sigma_matrix <- matrix(numeric(26*26), nrow = 26)
+  
+  for(i in 1:13){
+    for(j in 1:13){
+      sigma_matrix[i,j] <- org_sigma_matrix[i,j]
+      sigma_matrix[i+13,j+13] <- org_sigma_matrix[i,j]
+      sigma_matrix[i, j+13] <- - org_sigma_matrix[i,j] / 2
+      sigma_matrix[i+13, j] <- - org_sigma_matrix[i,j] / 2
+    }
+  }
+  # check properties:
+  # eigen(sigma_matrix)$values # add positive; matrix is positive-defined; matrix can be used as CoV matrix
+  
+  perm_real <- as.cycle(as.word(c(2:13, 1, 15:26, 14)))
+  
+  # gips::project_matrix(my_sigma_matrix, perm_real, 26) - my_sigma_matrix # matrix of zeros; this matrix is invariant under perm_real
+}else{
+  stop("Wrong experiment selected!")
+}
+
 # prod(1:perm_size) / 100 / 60 / 60  # liczba godzin potrzebnych do przejrzenia calej dziedziny
 
 my_goal_function <- goal_function_maker(perm_size, n_number)
 U <- attr(my_goal_function, "U")
 
-perm_real <- as.cycle(1:perm_size)
-
-(f_val_max <- my_goal_function(perm_real)) # 173.8
-(f_val_id <- my_goal_function(permutations::id)) # 79.5
+(f_val_max <- my_goal_function(perm_real)) # 1 --->>> 173.8; 2 --->>> 56.00
+(f_val_id <- my_goal_function(permutations::id)) # 1 --->>> 79.5; 2 --->>> -108.26
 
 
 # Reference algorithms:
-load("data/mh_list1e4.Rdata")
-load("data/mh_list1e5.Rdata")
-load("data/mc_list.Rdata")
-load("data/bg_start_id_list.Rdata")
+load(paste0("data/experiment", perform_experiment, "/mh_list1e4.Rdata"))
+load(paste0("data/experiment", perform_experiment, "/mh_list1e5.Rdata"))
+load(paste0("data/experiment", perform_experiment, "/mc_list.Rdata"))
+load(paste0("data/experiment", perform_experiment, "/bg_start_id_list.Rdata"))
 
 
 
@@ -28,7 +57,8 @@ load("data/bg_start_id_list.Rdata")
 
 # 1. a:
 my_a <- c(0.1, 0.3, 0.5, 1)
-load("data/eo_list_out_1.Rdata")
+load(paste0("data/experiment", perform_experiment, "/eo_list_out_1.Rdata"))
+
 eo_list_out_1_appended <- append_the_list(eo_list_out_1, list(mh_list1e4, mc_list,
                                                               bg_start_id_list))
 
@@ -43,7 +73,7 @@ plot_ecdf_list_single(eo_list_out_1[[2]],
 
 # 2. k_max:
 my_k_max <- c(1, 2, 3, 4, 7, 14, 20)
-load("data/eo_list_out_2.Rdata")
+load(paste0("data/experiment", perform_experiment, "/eo_list_out_2.Rdata"))
 
 eo_list_out_2_appended <- append_the_list(eo_list_out_2, list(mh_list1e4, mc_list,
                                                               bg_start_id_list))
@@ -59,7 +89,7 @@ plot_ecdf_list_single(eo_list_out_2[[4]], # unstable results
 
 # 3. pop_size:
 my_pop_size <- c(10, 30, 70, 100, 150, 200)
-load("data/eo_list_out_3.Rdata")
+load(paste0("data/experiment", perform_experiment, "/eo_list_out_3.Rdata"))
 
 eo_list_out_3_appended <- append_the_list(eo_list_out_3, list(mh_list1e4, mc_list,
                                                               bg_start_id_list))
@@ -83,7 +113,7 @@ par(mfrow = c(1,1))
 
 # 4. tournament_part:
 my_tournament_part <- c(0.07, 0.11, 0.2, 0.35, 0.5, 0.65)
-load("data/eo_list_out_4.Rdata")
+load(paste0("data/experiment", perform_experiment, "/eo_list_out_4.Rdata"))
 
 eo_list_out_4_appended <- append_the_list(eo_list_out_4, list(mh_list1e4, mc_list,
                                                               bg_start_id_list))
@@ -111,7 +141,7 @@ par(mfrow = c(1,1))
 
 # 5. success_treshold:
 my_success_treshold <- c(0.011, 0.021, 0.031, 0.041, 0.051)
-load("data/eo_list_out_5.Rdata")
+load(paste0("data/experiment", perform_experiment, "/eo_list_out_5.Rdata"))
 
 eo_list_out_5_appended <- append_the_list(eo_list_out_5, list(mh_list1e4, mc_list,
                                                               bg_start_id_list))
@@ -135,14 +165,13 @@ par(mfrow = c(1,1))
 
 # 6. init method:
 my_init <- c("random", "random_close", "id_close")
-load("data/eo_list_out_6.Rdata")
+load(paste0("data/experiment", perform_experiment, "/eo_list_out_6.Rdata"))
 
 eo_list_out_6_appended <- append_the_list(eo_list_out_6, list(mh_list1e4, mc_list,
                                                               bg_start_id_list))
 
 par(mfrow = c(2,2))
 plot_ecdf_list(eo_list_out_6_appended, paste0("initization method = ", my_init), legend_cex = 0.55)
-# The lines are very close for this budget. Try with bigger budget:
 plot_ecdf_list_single(eo_list_out_6[[1]], my_title = paste0("ECDF plot: init ", my_init[1]))
 plot_ecdf_list_single(eo_list_out_6[[2]], my_title = paste0("ECDF plot: init ", my_init[2]))
 plot_ecdf_list_single(eo_list_out_6[[3]], my_title = paste0("ECDF plot: init ", my_init[3]))
@@ -153,14 +182,13 @@ par(mfrow = c(1,1))
 
 # 7. init method (bigger budget):
 my_init <- c("random", "random_close", "id_close")
-load("data/eo_list_out_7.Rdata")
+load(paste0("data/experiment", perform_experiment, "/eo_list_out_7.Rdata"))
 
 eo_list_out_7_appended <- append_the_list(eo_list_out_7, list(mh_list1e5, mc_list,
                                                               bg_start_id_list))
 
 par(mfrow = c(2,2))
 plot_ecdf_list(eo_list_out_7_appended, paste0("initization method = ", my_init), legend_cex = 0.55)
-# The lines are very close for this budget. Try with bigger budget:
 plot_ecdf_list_single(eo_list_out_7[[1]], my_title = paste0("ECDF plot: init ", my_init[1]))
 plot_ecdf_list_single(eo_list_out_7[[2]], my_title = paste0("ECDF plot: init ", my_init[2]))
 plot_ecdf_list_single(eo_list_out_7[[3]], my_title = paste0("ECDF plot: init ", my_init[3]))
