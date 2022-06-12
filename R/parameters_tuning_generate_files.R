@@ -253,14 +253,14 @@ eo_list_out_6 <- get_list_of_lists_of_log_values(goal_function = my_goal_functio
 
 
 
-#### TODO(From this point):
+
 # 7. Start tuning for init method (bigger budget):
 set.seed(1234)
 my_init <- c("random", "random_close", "id_close")
 eo_list_out_7 <- get_list_of_lists_of_log_values(goal_function = my_goal_function, pop_size = 100,
                                                  success_treshold = 0.031, a = 0.3,
                                                  k_max = 7, tournament_part = 0.35, init = my_init,
-                                                 M = 5, max_iter = 1000, max_f_calls = 100000) # PC 5 h ?
+                                                 M = 5, max_iter = 1000, max_f_calls = 100000) # PC 3 h 25 min
 #save(eo_list_out_7, file=paste0("data/experiment", perform_experiment, "/eo_list_out_7.Rdata")) # CAUTIOUSLY! Not to overwrite!
 
 

@@ -331,7 +331,7 @@ par(mfrow = c(1,1))
 
 
 
-#### TODO(From this point):
+
 # 6. init method:
 my_init <- c("random", "random_close", "id_close")
 load(paste0("data/experiment", perform_experiment, "/eo_list_out_6.Rdata"))
@@ -349,22 +349,32 @@ par(mfrow = c(1,1))
 
 
 
+
 # 7. init method (bigger budget):
 my_init <- c("random", "random_close", "id_close")
 load(paste0("data/experiment", perform_experiment, "/eo_list_out_7.Rdata"))
 
-eo_list_out_7_appended <- append_the_list(eo_list_out_7, list(mh_list1e5, mc_list,
+eo_list_out_7_appended <- append_the_list(eo_list_out_7, list(mh_list1e4, mc_list, # TODO(mh_list1e5)
                                                               bg_start_id_list))
 
 par(mfrow = c(2,2))
-plot_ecdf_list(eo_list_out_7_appended, paste0("initization method = ", my_init), legend_cex = 0.55)
+plot_ecdf_list(eo_list_out_7_appended, paste0("initization method = ", my_init), legend_cex = 0.55, experiment = perform_experiment)
 plot_ecdf_list_single(eo_list_out_7[[1]], my_title = paste0("ECDF plot: init ", my_init[1]), experiment = perform_experiment)
 plot_ecdf_list_single(eo_list_out_7[[2]], my_title = paste0("ECDF plot: init ", my_init[2]), experiment = perform_experiment)
 plot_ecdf_list_single(eo_list_out_7[[3]], my_title = paste0("ECDF plot: init ", my_init[3]), experiment = perform_experiment)
 par(mfrow = c(1,1))
-# The best is init = "random_close".
-# Although, the differences does not seem big. The init = "random_close" had 1 unlucky run,
-# other runs were very good. The init = "random" had 2 unlucky runs, but not as unlucky as "random_close".
+# Now, init = "random_close" is not the best any more. We see one outsider in it.
+  # However, even if we get rid of the outsider, it is still worse than "id_colse":
+eo_list_out_7[[2]][[3]] <- NULL
+eo_list_out_7_appended <- append_the_list(eo_list_out_7, list(mh_list1e4, mc_list, # TODO(mh_list1e5)
+                                                              bg_start_id_list))
+
+par(mfrow = c(2,2))
+plot_ecdf_list(eo_list_out_7_appended, paste0("initization method = ", my_init), legend_cex = 0.55, experiment = perform_experiment)
+plot_ecdf_list_single(eo_list_out_7[[1]], my_title = paste0("ECDF plot: init ", my_init[1]), experiment = perform_experiment)
+plot_ecdf_list_single(eo_list_out_7[[2]], my_title = paste0("ECDF plot: init ", my_init[2]), experiment = perform_experiment)
+plot_ecdf_list_single(eo_list_out_7[[3]], my_title = paste0("ECDF plot: init ", my_init[3]), experiment = perform_experiment)
+par(mfrow = c(1,1))
 # More tests would be awesome, but the computing time like this is enormous for us.
 
 
