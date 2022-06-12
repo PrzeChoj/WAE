@@ -3,7 +3,7 @@ source("R/algorithm.R") # devtools::install_github("PrzeChoj/gips")
 
 set.seed(1234)
 
-perform_experiment <- "1"
+perform_experiment <- "2"
 
 n_number <- 20
 if(perform_experiment == "1"){
@@ -47,7 +47,7 @@ U <- attr(my_goal_function, "U")
 
 # Reference algorithms:
 load(paste0("data/experiment", perform_experiment, "/mh_list1e4.Rdata"))
-load(paste0("data/experiment", perform_experiment, "/mh_list1e5.Rdata")) # TODO(for experiment 2)
+load(paste0("data/experiment", perform_experiment, "/mh_list1e5.Rdata"))
 load(paste0("data/experiment", perform_experiment, "/mc_list.Rdata"))
 load(paste0("data/experiment", perform_experiment, "/bg_start_id_list.Rdata"))
 
@@ -354,7 +354,7 @@ par(mfrow = c(1,1))
 my_init <- c("random", "random_close", "id_close")
 load(paste0("data/experiment", perform_experiment, "/eo_list_out_7.Rdata"))
 
-eo_list_out_7_appended <- append_the_list(eo_list_out_7, list(mh_list1e4, mc_list, # TODO(mh_list1e5)
+eo_list_out_7_appended <- append_the_list(eo_list_out_7, list(mh_list1e5, mc_list,
                                                               bg_start_id_list))
 
 par(mfrow = c(2,2))
@@ -366,7 +366,7 @@ par(mfrow = c(1,1))
 # Now, init = "random_close" is not the best any more. We see one outsider in it.
   # However, even if we get rid of the outsider, it is still worse than "id_colse":
 eo_list_out_7[[2]][[3]] <- NULL
-eo_list_out_7_appended <- append_the_list(eo_list_out_7, list(mh_list1e4, mc_list, # TODO(mh_list1e5)
+eo_list_out_7_appended <- append_the_list(eo_list_out_7, list(mh_list1e5, mc_list, # TODO(mh_list1e5)
                                                               bg_start_id_list))
 
 par(mfrow = c(2,2))
