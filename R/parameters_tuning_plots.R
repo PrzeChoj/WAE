@@ -5,7 +5,7 @@ source("R/algorithm.R") # devtools::install_github("PrzeChoj/gips")
 
 set.seed(1234)
 
-perform_experiment <- "2" # "1" or "2" or "3"
+perform_experiment <- "3" # "1" or "2" or "3"
 
 n_number <- 20
 if(perform_experiment == "1"){
@@ -66,8 +66,8 @@ if(perform_experiment == "1"){
 my_goal_function <- goal_function_maker(perm_size, n_number, sigma = sigma_matrix)
 U <- attr(my_goal_function, "U")
 
-(f_val_max <- my_goal_function(perm_real)) # 1 --->>> 173.8; 2 --->>> 56.00
-(f_val_id <- my_goal_function(permutations::id)) # 1 --->>> 79.5; 2 --->>> -108.26
+(f_val_max <- my_goal_function(perm_real)) # 1 --->>> 173.8; 2 --->>> 56.00; 3 --->>> -41.5995
+(f_val_id <- my_goal_function(permutations::id)) # 1 --->>> 79.5; 2 --->>> -108.26; 3 --->>> -194.46
 
 
 # Reference algorithms:
@@ -415,11 +415,18 @@ par(mfrow = c(1,1))
 
 
 
-# TODO()
+load(paste0("data/experiment", perform_experiment, "/eo_list_out_long.Rdata"))
+
+plot_ecdf_list(list(mh_list1e4, mc_list, bg_start_id_list, eo_list_out_long),
+               c("Ewolutional Optimization 1", "Ewolutional Optimization 2"), legend_cex = 0.8, experiment = perform_experiment)
+
+# TODO(Linie ciut przezroczycte, średnia dokładna, szare przedziały ufności)
+par(mfrow = c(2,1))
+plot_ecdf_list_single(mh_list1e4, my_title = "ECDF plot: MH", experiment = perform_experiment)
+plot_ecdf_list_single(eo_list_out_long, my_title = "ECDF plot: EO", experiment = perform_experiment)
+par(mfrow = c(1,1))
 
 
-
-
-
-
+t.test(1:100 %>% sapply(function(i){max(mh_list1e4[[i]])}),
+       1:200 %>% sapply(function(i){max(eo_list_out_long[[i]])})) # < 2.2 * 10 ^ (-16), so definitely EO is better
 
