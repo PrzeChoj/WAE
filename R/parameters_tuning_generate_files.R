@@ -3,7 +3,8 @@ source("R/algorithm.R") # devtools::install_github("PrzeChoj/gips")
 
 set.seed(1234)
 
-perform_experiment <- "2"
+# sum time for experiment "1" --->>> 24 h; experiment 2 --->>> 17 h; all experiments --->>> 41 h
+perform_experiment <- "3" # "1" or "2" or "3"
 
 n_number <- 20
 if(perform_experiment == "1"){
@@ -16,33 +17,57 @@ if(perform_experiment == "1"){
   
   # generate sigma matrix:
   org_sigma_matrix <- sigma_maker(13)
-  sigma_matrix <- matrix(numeric(26*26), nrow = 26)
+  sigma_matrix <- matrix(numeric(perm_size*perm_size), nrow = perm_size)
   
   for(i in 1:13){
     for(j in 1:13){
-      sigma_matrix[i,j] <- org_sigma_matrix[i,j]
-      sigma_matrix[i+13,j+13] <- org_sigma_matrix[i,j]
-      sigma_matrix[i, j+13] <- - org_sigma_matrix[i,j] / 2
-      sigma_matrix[i+13, j] <- - org_sigma_matrix[i,j] / 2
+      sigma_matrix[i,    j   ] <-   org_sigma_matrix[i,j]
+      sigma_matrix[i+13, j+13] <-   org_sigma_matrix[i,j]
+      sigma_matrix[i,    j+13] <- - org_sigma_matrix[i,j] / 2
+      sigma_matrix[i+13, j   ] <- - org_sigma_matrix[i,j] / 2
     }
   }
-  # check properties:
-  # eigen(sigma_matrix)$values # add positive; matrix is positive-defined; matrix can be used as CoV matrix
   
   perm_real <- as.cycle(as.word(c(2:13, 1, 15:26, 14)))
+}else if(perform_experiment == "3"){
+  perm_size <- 21
   
-  # gips::project_matrix(my_sigma_matrix, perm_real, 26) - my_sigma_matrix # matrix of zeros; this matrix is invariant under perm_real
+  # generate sigma matrix:
+  org_sigma_matrix <- sigma_maker(7)
+  sigma_matrix <- matrix(numeric(perm_size*perm_size), nrow = perm_size)
+  
+  for(i in 1:7){
+    for(j in 1:7){
+      sigma_matrix[i,    j   ] <-   org_sigma_matrix[i,j]
+      sigma_matrix[i+7,  j+7 ] <-   org_sigma_matrix[i,j]
+      sigma_matrix[i+14, j+14] <-   org_sigma_matrix[i,j]
+      sigma_matrix[i,    j+7 ] <- - org_sigma_matrix[i,j] / 2
+      sigma_matrix[i,    j+14] <- - org_sigma_matrix[i,j] / 4
+      sigma_matrix[i+7,  j   ] <- - org_sigma_matrix[i,j] / 2
+      sigma_matrix[i+7,  j+14] <- - org_sigma_matrix[i,j] / 2
+      sigma_matrix[i+14, j   ] <- - org_sigma_matrix[i,j] / 4
+      sigma_matrix[i+14, j+7 ] <- - org_sigma_matrix[i,j] / 2
+    }
+  }
+  
+  perm_real <- as.cycle(as.word(c(2:7, 1, 9:14, 8, 16:21, 15)))
 }else{
   stop("Wrong experiment selected!")
 }
+
+# check properties:
+  # eigen(sigma_matrix)$values                                              # all positive; matrix is positive-defined; matrix can be used as CoV matrix
+  # gips::project_matrix(sigma_matrix, perm_real, perm_size) - sigma_matrix # matrix of zeros; this matrix is invariant under perm_real
+  # heatmap(sigma_matrix, Rowv=NA, Colv = NA)                               # this is how this matrix looks like
 
 # prod(1:perm_size) / 100 / 60 / 60  # liczba godzin potrzebnych do przejrzenia calej dziedziny
 
 my_goal_function <- goal_function_maker(perm_size, n_number, sigma = sigma_matrix)
 U <- attr(my_goal_function, "U")
+# heatmap(U, Rowv=NA, Colv = NA)                               # this is how this U matrix looks like
 
-(f_val_max <- my_goal_function(perm_real)) # 1 --->>> 173.8; 2 --->>> 56.00
-(f_val_id <- my_goal_function(permutations::id)) # 1 --->>> 79.5; 2 --->>> -108.26
+(f_val_max <- my_goal_function(perm_real))       # 1 --->>> 173.8; 2 --->>>  56.00;  3 --->>> -41.5995
+(f_val_id <- my_goal_function(permutations::id)) # 1 --->>> 79.5;  2 --->>> -108.26; 3 --->>> -194.46
 
 
 
@@ -262,6 +287,29 @@ eo_list_out_7 <- get_list_of_lists_of_log_values(goal_function = my_goal_functio
                                                  k_max = 7, tournament_part = 0.35, init = my_init,
                                                  M = 5, max_iter = 1000, max_f_calls = 100000) # PC 3 h 25 min
 #save(eo_list_out_7, file=paste0("data/experiment", perform_experiment, "/eo_list_out_7.Rdata")) # CAUTIOUSLY! Not to overwrite!
+
+
+
+
+
+
+
+
+########################################################################################################################
+
+
+###################### experiment 3
+
+# Assume, the exp 3 is more similar to exp 2 than exp 1
+
+
+set.seed(1234)
+my_init <- c("id_close", "id_close")
+eo_list_out_long <- get_list_of_lists_of_log_values(goal_function = my_goal_function, pop_size = 100,
+                                                 success_treshold = 0.031, a = 0.3,
+                                                 k_max = 7, tournament_part = 0.35, init = my_init,
+                                                 M = 100, max_iter = 1000, max_f_calls = 10000) # PC 12 h ?
+#save(eo_list_out_long, file=paste0("data/experiment", perform_experiment, "/eo_list_out_long.Rdata")) # CAUTIOUSLY! Not to overwrite!
 
 
 

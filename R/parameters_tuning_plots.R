@@ -1,9 +1,11 @@
 library(magrittr)
 source("R/algorithm.R") # devtools::install_github("PrzeChoj/gips")
 
+# TODO(t-tests)
+
 set.seed(1234)
 
-perform_experiment <- "2"
+perform_experiment <- "2" # "1" or "2" or "3"
 
 n_number <- 20
 if(perform_experiment == "1"){
@@ -16,25 +18,48 @@ if(perform_experiment == "1"){
   
   # generate sigma matrix:
   org_sigma_matrix <- sigma_maker(13)
-  sigma_matrix <- matrix(numeric(26*26), nrow = 26)
+  sigma_matrix <- matrix(numeric(perm_size*perm_size), nrow = perm_size)
   
   for(i in 1:13){
     for(j in 1:13){
-      sigma_matrix[i,j] <- org_sigma_matrix[i,j]
-      sigma_matrix[i+13,j+13] <- org_sigma_matrix[i,j]
-      sigma_matrix[i, j+13] <- - org_sigma_matrix[i,j] / 2
-      sigma_matrix[i+13, j] <- - org_sigma_matrix[i,j] / 2
+      sigma_matrix[i,    j   ] <-   org_sigma_matrix[i,j]
+      sigma_matrix[i+13, j+13] <-   org_sigma_matrix[i,j]
+      sigma_matrix[i,    j+13] <- - org_sigma_matrix[i,j] / 2
+      sigma_matrix[i+13, j   ] <- - org_sigma_matrix[i,j] / 2
     }
   }
-  # check properties:
-  # eigen(sigma_matrix)$values # add positive; matrix is positive-defined; matrix can be used as CoV matrix
   
   perm_real <- as.cycle(as.word(c(2:13, 1, 15:26, 14)))
+}else if(perform_experiment == "3"){
+  perm_size <- 21
   
-  # gips::project_matrix(my_sigma_matrix, perm_real, 26) - my_sigma_matrix # matrix of zeros; this matrix is invariant under perm_real
+  # generate sigma matrix:
+  org_sigma_matrix <- sigma_maker(7)
+  sigma_matrix <- matrix(numeric(perm_size*perm_size), nrow = perm_size)
+  
+  for(i in 1:7){
+    for(j in 1:7){
+      sigma_matrix[i,    j   ] <-   org_sigma_matrix[i,j]
+      sigma_matrix[i+7,  j+7 ] <-   org_sigma_matrix[i,j]
+      sigma_matrix[i+14, j+14] <-   org_sigma_matrix[i,j]
+      sigma_matrix[i,    j+7 ] <- - org_sigma_matrix[i,j] / 2
+      sigma_matrix[i,    j+14] <- - org_sigma_matrix[i,j] / 4
+      sigma_matrix[i+7,  j   ] <- - org_sigma_matrix[i,j] / 2
+      sigma_matrix[i+7,  j+14] <- - org_sigma_matrix[i,j] / 2
+      sigma_matrix[i+14, j   ] <- - org_sigma_matrix[i,j] / 4
+      sigma_matrix[i+14, j+7 ] <- - org_sigma_matrix[i,j] / 2
+    }
+  }
+  
+  perm_real <- as.cycle(as.word(c(2:7, 1, 9:14, 8, 16:21, 15)))
 }else{
   stop("Wrong experiment selected!")
 }
+
+# check properties:
+  # eigen(sigma_matrix)$values                                              # all positive; matrix is positive-defined; matrix can be used as CoV matrix
+  # gips::project_matrix(sigma_matrix, perm_real, perm_size) - sigma_matrix # matrix of zeros; this matrix is invariant under perm_real
+  # heatmap(sigma_matrix, Rowv=NA, Colv = NA)                               # this is how this matrix looks like
 
 # prod(1:perm_size) / 100 / 60 / 60  # liczba godzin potrzebnych do przejrzenia calej dziedziny
 
@@ -83,11 +108,11 @@ load(paste0("data/experiment", perform_experiment, "/eo_list_out_2.Rdata"))
 eo_list_out_2_appended <- append_the_list(eo_list_out_2, list(mh_list1e4, mc_list,
                                                               bg_start_id_list))
 
-plot_ecdf_list(eo_list_out_2_appended, paste0("k_max = ", my_k_max), legend_cex = 0.8)
+plot_ecdf_list(eo_list_out_2_appended, paste0("k_max = ", my_k_max), legend_cex = 0.8, experiment = perform_experiment)
 # the best is k_max = 4, but k = 1 is very close
 plot_ecdf_list_single(eo_list_out_2[[4]], # unstable results
                       my_title = paste0("ECDF plot: k_max = ",
-                                        my_k_max[4]))
+                                        my_k_max[4]), experiment = perform_experiment)
 
 
 
@@ -376,6 +401,24 @@ plot_ecdf_list_single(eo_list_out_7[[2]], my_title = paste0("ECDF plot: init ", 
 plot_ecdf_list_single(eo_list_out_7[[3]], my_title = paste0("ECDF plot: init ", my_init[3]), experiment = perform_experiment)
 par(mfrow = c(1,1))
 # More tests would be awesome, but the computing time like this is enormous for us.
+
+
+
+
+
+##############################################################################################################################
+
+
+
+
+###################### experiment 3
+
+
+
+# TODO()
+
+
+
 
 
 
