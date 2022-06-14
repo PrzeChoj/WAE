@@ -300,20 +300,16 @@ eo_list_out_7 <- get_list_of_lists_of_log_values(goal_function = my_goal_functio
 
 ###################### experiment 3
 
-# Assume, the exp 3 is more similar to exp 2 than exp 1
-
-
+# compare inits: "random_close" and "id_close" as a long sample:
 set.seed(1234)
-my_init <- c("id_close", "id_close")
+my_init <- c("random_close", "id_close")
 eo_list_out_long <- get_list_of_lists_of_log_values(goal_function = my_goal_function, pop_size = 100,
-                                                 success_treshold = 0.031, a = 0.3,
-                                                 k_max = 7, tournament_part = 0.35, init = my_init,
-                                                 M = 100, max_iter = 1000, max_f_calls = 10000) # PC 5 h
-for(single_vector_eo in eo_list_out_long[[2]]){
-  eo_list_out_long[[1]][[length(eo_list_out_long[[1]]) + 1]] <- single_vector_eo
-}
-eo_list_out_long <- eo_list_out_long[[1]]
-#save(eo_list_out_long, file=paste0("data/experiment", perform_experiment, "/eo_list_out_long.Rdata")) # CAUTIOUSLY! Not to overwrite!
+                                                    success_treshold = 0.031, a = 0.3,
+                                                    k_max = 7, tournament_part = 0.35, init = my_init,
+                                                    M = 200, max_iter = 1000, max_f_calls = 10000) # PC 10 h
 
-
+eo_list_random_close <- eo_list_out_long[[1]]
+eo_list_id_close <- eo_list_out_long[[2]]
+#save(eo_list_random_close, eo_list_id_close, file=paste0("data/experiment", perform_experiment, "/eo_list_init.Rdata")) # CAUTIOUSLY! Not to overwrite!
+#save(eo_list_out_long, file=paste0("data/experiment3/eo_back_up.Rdata")) # CAUTIOUSLY! Not to overwrite!
 

@@ -66,13 +66,13 @@ if(perform_experiment == "1"){
 my_goal_function <- goal_function_maker(perm_size, n_number, sigma = sigma_matrix)
 U <- attr(my_goal_function, "U")
 
-(f_val_max <- my_goal_function(perm_real)) # 1 --->>> 173.8; 2 --->>> 56.00; 3 --->>> -41.5995
-(f_val_id <- my_goal_function(permutations::id)) # 1 --->>> 79.5; 2 --->>> -108.26; 3 --->>> -194.46
+(f_val_max <- my_goal_function(perm_real))       # 1 --->>> 173.8; 2 --->>> 56.00;   3 --->>> -41.5995
+(f_val_id <- my_goal_function(permutations::id)) # 1 --->>> 79.5;  2 --->>> -108.26; 3 --->>> -194.46
 
 
 # Reference algorithms:
 load(paste0("data/experiment", perform_experiment, "/mh_list1e4.Rdata"))
-load(paste0("data/experiment", perform_experiment, "/mh_list1e5.Rdata"))
+load(paste0("data/experiment", perform_experiment, "/mh_list1e5.Rdata"))       # non existing for experiment 3
 load(paste0("data/experiment", perform_experiment, "/mc_list.Rdata"))
 load(paste0("data/experiment", perform_experiment, "/bg_start_id_list.Rdata"))
 
@@ -415,18 +415,25 @@ par(mfrow = c(1,1))
 
 
 
-load(paste0("data/experiment", perform_experiment, "/eo_list_out_long.Rdata"))
+load(paste0("data/experiment", perform_experiment, "/eo_list_init.Rdata"))
 
-plot_ecdf_list(list(mh_list1e4, mc_list, bg_start_id_list, eo_list_out_long),
-               c("Ewolutional Optimization 1", "Ewolutional Optimization 2"), legend_cex = 0.8, experiment = perform_experiment)
+plot_ecdf_list(list(mh_list1e4, mc_list, bg_start_id_list, eo_list_random_close, eo_list_id_close),
+               c("EO random close", "EO id close"), legend_cex = 0.8, experiment = perform_experiment)
 
-# TODO(Linie ciut przezroczycte, średnia dokładna, szare przedziały ufności)
-par(mfrow = c(2,1))
-plot_ecdf_list_single(mh_list1e4, my_title = "ECDF plot: MH", experiment = perform_experiment)
-plot_ecdf_list_single(eo_list_out_long, my_title = "ECDF plot: EO", experiment = perform_experiment)
+# TODO(Ustawiłem 1:10, bo 1:200 bardzo lagowało. Zrobić linie ciut przezroczycte, średnia dokładna, szare przedziały ufności)
+par(mfrow = c(3,1))
+plot_ecdf_list_single(mh_list1e4[1:10], my_title = "ECDF plot: MH", experiment = perform_experiment)
+plot_ecdf_list_single(eo_list_random_close[1:10], my_title = "ECDF plot: EO, random close", experiment = perform_experiment)
+plot_ecdf_list_single(eo_list_id_close[1:10], my_title = "ECDF plot: EO, id close", experiment = perform_experiment)
 par(mfrow = c(1,1))
 
 
 t.test(1:100 %>% sapply(function(i){max(mh_list1e4[[i]])}),
-       1:200 %>% sapply(function(i){max(eo_list_out_long[[i]])})) # < 2.2 * 10 ^ (-16), so definitely EO is better
+       1:200 %>% sapply(function(i){max(eo_list_random_close[[i]])})) # p-val < 2.2 * 10 ^ (-16), so definitely EO is better
+t.test(1:100 %>% sapply(function(i){max(mh_list1e4[[i]])}),
+       1:200 %>% sapply(function(i){max(eo_list_id_close[[i]])})) # p-val < 2.2 * 10 ^ (-16), so definitely EO is better
+t.test(1:200 %>% sapply(function(i){max(eo_list_random_close[[i]])}),
+       1:200 %>% sapply(function(i){max(eo_list_id_close[[i]])})) # p-val = 0.5607, so no conclusions can be made on the betterness
+
+
 
