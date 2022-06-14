@@ -180,9 +180,8 @@ append_the_list <- function(initial_list, additional_lists){
   out_list
 }
 
-plot_ecdf_list <- function(list_of_lists_f_vals, legent_additional_text = "", legend_cex=1, show_legend = TRUE,
-                           my_title = "ECDF plot", experiment = "1"){
-  # values from parameter_tuning_generate_files.R:
+plot_ecdf_list <- function(list_of_lists_f_vals, legent_additional_text = "", experiment = "1", ...){
+  # values from parameter_tuning_generate_data.R:
   if(experiment == "1"){
     f_val_max <- 173.8259  # my_goal_function(perm_real)
     f_val_id <- 79.51006   # my_goal_function(permutations::id)
@@ -200,19 +199,18 @@ plot_ecdf_list <- function(list_of_lists_f_vals, legent_additional_text = "", le
   }
   
   plot_ecdf(list_of_lists_f_vals, min_val = f_val_med, max_val = f_val_max, reference_line = f_val_id,
-            legend_text = c("MH", "MC", "BG_id", legent_additional_text), legend_cex = legend_cex,
-            show_legend = show_legend, my_title = my_title)
+            legend_text = c("MH", "MC", "BG_id", legent_additional_text), ...)
 }
 
 # `plot_ecdf_list_single` dostaje listę wyników, a nie listę list wyników
-plot_ecdf_list_single <- function(list_of_f_vals, my_title = "ECDF plot", experiment = "1"){
+plot_ecdf_list_single <- function(list_of_f_vals, ...){
   my_list <- list()
   
   for(line in list_of_f_vals){
     my_list[[length(my_list) + 1]] <- list(line)
   }
   
-  plot_ecdf_list(my_list, show_legend=FALSE, my_title = my_title, experiment = experiment) 
+  plot_ecdf_list(my_list, show_legend=FALSE,...)
 }
 
 

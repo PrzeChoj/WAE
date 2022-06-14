@@ -5,7 +5,7 @@ source("R/algorithm.R") # devtools::install_github("PrzeChoj/gips")
 
 set.seed(1234)
 
-perform_experiment <- "3" # "1" or "2" or "3"
+perform_experiment <- "1" # "1" or "2" or "3"
 
 n_number <- 20
 if(perform_experiment == "1"){
@@ -124,15 +124,18 @@ load(paste0("data/experiment", perform_experiment, "/eo_list_out_3.Rdata"))
 eo_list_out_3_appended <- append_the_list(eo_list_out_3, list(mh_list1e4, mc_list,
                                                               bg_start_id_list))
 
-par(mfrow = c(2,2))
-plot_ecdf_list(eo_list_out_3_appended, paste0("pop_size = ", my_pop_size), legend_cex = 0.4)
+plot_ecdf_list(eo_list_out_3_appended, paste0("pop_size = ", my_pop_size), legend_cex = 0.8)
+
+# 1:10, bo laguje
+par(mfrow = c(1,4))
+plot_ecdf_list_single(mh_list1e4[1:10], my_title = "ECDF plot: MH")
 # the best is pop_size = 100; as we used to. pop_size = 150 is very close
-plot_ecdf_list_single(eo_list_out_3[[4]], # unstable results
-                      my_title = paste0("ECDF plot: pop_size = ",
-                                        my_pop_size[4]))
 plot_ecdf_list_single(eo_list_out_3[[1]], # transparently worse results
                       my_title = paste0("ECDF plot: pop_size = ",
                                         my_pop_size[1]))
+plot_ecdf_list_single(eo_list_out_3[[4]], # unstable results
+                      my_title = paste0("ECDF plot: pop_size = ",
+                                        my_pop_size[4]))
 plot_ecdf_list_single(eo_list_out_3[[6]], # transparently worse results
                       my_title = paste0("ECDF plot: pop_size = ",
                                         my_pop_size[6]))
@@ -217,8 +220,8 @@ load(paste0("data/experiment", perform_experiment, "/eo_list_out_7.Rdata"))
 eo_list_out_7_appended <- append_the_list(eo_list_out_7, list(mh_list1e5, mc_list,
                                                               bg_start_id_list))
 
-par(mfrow = c(2,2))
 plot_ecdf_list(eo_list_out_7_appended, paste0("initization method = ", my_init), legend_cex = 0.55)
+par(mfrow = c(1,3))
 plot_ecdf_list_single(eo_list_out_7[[1]], my_title = paste0("ECDF plot: init ", my_init[1]))
 plot_ecdf_list_single(eo_list_out_7[[2]], my_title = paste0("ECDF plot: init ", my_init[2]))
 plot_ecdf_list_single(eo_list_out_7[[3]], my_title = paste0("ECDF plot: init ", my_init[3]))
@@ -421,10 +424,11 @@ plot_ecdf_list(list(mh_list1e4, mc_list, bg_start_id_list, eo_list_random_close,
                c("EO random close", "EO id close"), legend_cex = 0.8, experiment = perform_experiment)
 
 # TODO(Ustawiłem 1:10, bo 1:200 bardzo lagowało. Zrobić linie ciut przezroczycte, średnia dokładna, szare przedziały ufności)
-par(mfrow = c(3,1))
-plot_ecdf_list_single(mh_list1e4[1:10], my_title = "ECDF plot: MH", experiment = perform_experiment)
-plot_ecdf_list_single(eo_list_random_close[1:10], my_title = "ECDF plot: EO, random close", experiment = perform_experiment)
-plot_ecdf_list_single(eo_list_id_close[1:10], my_title = "ECDF plot: EO, id close", experiment = perform_experiment)
+xlog = FALSE
+par(mfrow = c(1,3))
+plot_ecdf_list_single(mh_list1e4[1:10], my_title = "ECDF plot: MH", experiment = perform_experiment, xlog = xlog)
+plot_ecdf_list_single(eo_list_random_close[1:10], my_title = "ECDF plot: EO, random close", experiment = perform_experiment, xlog = xlog)
+plot_ecdf_list_single(eo_list_id_close[1:10], my_title = "ECDF plot: EO, id close", experiment = perform_experiment, xlog = xlog)
 par(mfrow = c(1,1))
 
 
