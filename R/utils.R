@@ -1,5 +1,5 @@
 library(permutations)
-library(gips)  # devtools::install_github("PrzeChoj/gips")
+library(gips)  # devtools::install_github("PrzeChoj/gips", ref = "91ce43e068f")
 
 sigma_maker <- function(p){
   sigma <- matrix(numeric(p*p), nrow=p)

@@ -1,5 +1,5 @@
 library(magrittr)
-source("R/algorithm.R") # devtools::install_github("PrzeChoj/gips")
+source("R/algorithm.R") # devtools::install_github("PrzeChoj/gips", ref = "91ce43e068f")
 
 # TODO(t-tests)
 
