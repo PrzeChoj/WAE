@@ -359,10 +359,27 @@ eo_list_id_close <- eo_list_out_long[[2]]
 # MH for reference
 set.seed(1234)
 time_start <- Sys.time()
-mh <- gips::MH(U = U, n_number = n, max_iter = 1000) # PC 1000 --->>> 4 minutes; 100 000 --->>> 7? h
+mh <- gips::MH(U = U, n_number = n, max_iter = 100000) # PC 100 000 --->>> 4 h
 time_end <- Sys.time()
 print(time_end - time_start)
 mh_values <- mh[["goal_function_logvalues"]]
 #save(mh_values, file=paste0("data/experiment", perform_experiment, "/mh.Rdata")) # CAUTIOUSLY! Not to overwrite!
+#save(mh, file=paste0("data/experiment", perform_experiment, "/mh_full.Rdata")) # CAUTIOUSLY! Not to overwrite!
+
+
+# EO
+set.seed(1234)
+time_start <- Sys.time()
+eo <- evolutional_optimization(my_goal_function = my_goal_function, pop_size = 100,
+                               success_treshold = 0.031, a = 0.3,
+                               k_max = 7, tournament_part = 0.5, init = "id_close",
+                               max_iter = 10, max_f_calls = 1000) # PC 1000 --->>> 4.5 min; 100 000 --->>> 4.5? h?
+time_end <- Sys.time()
+print(time_end - time_start)
+eo_values <- eo[["goal_function_logvalues"]]
+#save(eo_values, file=paste0("data/experiment", perform_experiment, "/eo.Rdata")) # CAUTIOUSLY! Not to overwrite!
+#save(eo, file=paste0("data/experiment", perform_experiment, "/eo_full.Rdata")) # CAUTIOUSLY! Not to overwrite!
+
+
 
 

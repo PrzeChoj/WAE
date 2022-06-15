@@ -54,7 +54,7 @@ evolutional_optimization <- function(my_goal_function, max_iter=100, pop_size=15
       population[[i]] <- runif_perm(perm_size)
       f_values[i] <- my_goal_function(population[[i]])
     }
-  }else if(init == "id_close"){
+  }else if(init == "id_close"){ # bug, I initially wanted to init in the distance 1, 2 or 3 from id, but unfortunately it all was initialized from distance 1. It is left as it is for reproducibility
     for(i in 1:pop_size){
       population[[i]] <- as.cycle(permutations::id * runif_transposition(perm_size)) # 1st neighbout
     }
@@ -65,11 +65,10 @@ evolutional_optimization <- function(my_goal_function, max_iter=100, pop_size=15
       population[[i]] <- as.cycle(permutations::id * runif_transposition(perm_size)) # 3rd neighbout
     }
     
-    
     for(i in 1:pop_size){
       f_values[i] <- my_goal_function(population[[i]]) # evaluation
     }
-  }else if(init == "random_close"){
+  }else if(init == "random_close"){ # bug, I initially wanted to init in the distance 1, 2 or 3 from population[[1]], but unfortunately it all was initialized from distance 1. It is left as it is for reproducibility
     population[[1]] <- runif_perm(perm_size) # initial perm
     
     for(i in 2:pop_size){
@@ -81,7 +80,6 @@ evolutional_optimization <- function(my_goal_function, max_iter=100, pop_size=15
     for(i in 2:max(ceiling(1/3*pop_size), pop_size)){
       population[[i]] <- as.cycle(population[[1]] * runif_transposition(perm_size)) # 3rd neighbout
     }
-    
     
     for(i in 1:pop_size){
       f_values[i] <- my_goal_function(population[[i]]) # evaluation
@@ -167,7 +165,6 @@ evolutional_optimization <- function(my_goal_function, max_iter=100, pop_size=15
         tournament_f_values <- mutants_f_values[players]
         winner <- players[which(tournament_f_values == max(tournament_f_values))[1]]
         
-        # TODO(ask if all specimens should be mutated)
         population[[i]] <- mutants[[winner]]
         f_values[i] <- mutants_f_values[winner]
       }
