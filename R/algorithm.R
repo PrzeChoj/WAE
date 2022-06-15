@@ -109,7 +109,7 @@ evolutional_optimization <- function(my_goal_function, max_iter=100, pop_size=15
     mutants <- list()
     mutants_f_values <- numeric(pop_size)
     
-      # draw number of mutations for a specimens
+    # draw number of mutations for a specimens
     num_of_mutations <- pmax(rbinom(pop_size, k_max, p_t_list[iteration-1]), 1)
     for(i in 1:pop_size){
       mutation_perm <- permutations::id

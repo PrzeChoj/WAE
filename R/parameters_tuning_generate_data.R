@@ -3,7 +3,8 @@ source("R/algorithm.R") # devtools::install_github("PrzeChoj/gips", ref = "91ce4
 
 set.seed(1234)
 
-# sum time for experiment "1" --->>> 24 h; experiment 2 --->>> 17 h; experiment 3 --->>> 10 h; all experiments --->>> 51 h
+# summary time for experiment 0 --->>>  6 minutes; 1 --->>> 24 h; 2 --->>> 17 h; 3 --->>> 10 h; 4 --->>> 10? h
+  # all experiments --->>> 61? h
 perform_experiment <- "4" # "0", "1" or "2" or "3" or "4"
 
 n_number <- 20
@@ -373,12 +374,23 @@ time_start <- Sys.time()
 eo <- evolutional_optimization(my_goal_function = my_goal_function, pop_size = 100,
                                success_treshold = 0.031, a = 0.3,
                                k_max = 7, tournament_part = 0.5, init = "id_close",
-                               max_iter = 10, max_f_calls = 1000) # PC 1000 --->>> 4.5 min; 100 000 --->>> 4.5? h?
+                               max_iter = 1000, max_f_calls = 100000) # PC 1000 --->>> 4.5 min; 100 000 --->>> 2 h 10 min
 time_end <- Sys.time()
 print(time_end - time_start)
-eo_values <- eo[["goal_function_logvalues"]]
-#save(eo_values, file=paste0("data/experiment", perform_experiment, "/eo.Rdata")) # CAUTIOUSLY! Not to overwrite!
-#save(eo, file=paste0("data/experiment", perform_experiment, "/eo_full.Rdata")) # CAUTIOUSLY! Not to overwrite!
+#save(eo, file=paste0("data/experiment", perform_experiment, "/eo_full_1.Rdata")) # CAUTIOUSLY! Not to overwrite!
+
+# chuja działa. Wygląda na minimalizacje, a nie maxymalizacje
+
+set.seed(1234)
+time_start <- Sys.time()
+eo <- evolutional_optimization(my_goal_function = my_goal_function, pop_size = 100,
+                               success_treshold = 0.031, a = 0.3,
+                               k_max = 7, tournament_part = 0.5, init = "random_close",
+                               max_iter = 1000, max_f_calls = 100000)
+time_end <- Sys.time()
+print(time_end - time_start)
+#save(eo, file=paste0("data/experiment", perform_experiment, "/eo_full_2.Rdata")) # CAUTIOUSLY! Not to overwrite!
+
 
 
 
