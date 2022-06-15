@@ -182,7 +182,11 @@ append_the_list <- function(initial_list, additional_lists){
 
 plot_ecdf_list <- function(list_of_lists_f_vals, legent_additional_text = "", experiment = "1", ...){
   # values from parameter_tuning_generate_data.R:
-  if(experiment == "1"){
+  if(experiment == "0"){
+    f_val_max <- -28.5     # my_goal_function(perm_real)
+    f_val_id <- -45.8      # my_goal_function(permutations::id)
+    f_val_med <- -60       # median(mc_list[[1]])
+  }else if(experiment == "1"){
     f_val_max <- 173.8259  # my_goal_function(perm_real)
     f_val_id <- 79.51006   # my_goal_function(permutations::id)
     f_val_med <- -1.023756 # median(mc_list[[1]])
@@ -210,7 +214,7 @@ plot_ecdf_list_single <- function(list_of_f_vals, ...){
     my_list[[length(my_list) + 1]] <- list(line)
   }
   
-  plot_ecdf_list(my_list, show_legend=FALSE,...)
+  plot_ecdf_list(my_list, show_legend=FALSE, ...)
 }
 
 

@@ -4,10 +4,15 @@ source("R/algorithm.R") # devtools::install_github("PrzeChoj/gips", ref = "91ce4
 set.seed(1234)
 
 # sum time for experiment "1" --->>> 24 h; experiment 2 --->>> 17 h; experiment 3 --->>> 10 h; all experiments --->>> 51 h
-perform_experiment <- "3" # "1" or "2" or "3"
+perform_experiment <- "0" # "0", "1" or "2" or "3"
 
 n_number <- 20
-if(perform_experiment == "1"){
+if(perform_experiment == "0"){
+  perm_size <- 6
+  sigma_matrix <- NULL
+  
+  perm_real <- as.cycle(1:perm_size)
+}else if(perform_experiment == "1"){
   perm_size <- 25
   sigma_matrix <- NULL
   
@@ -66,8 +71,8 @@ my_goal_function <- goal_function_maker(perm_size, n_number, sigma = sigma_matri
 U <- attr(my_goal_function, "U")
 # heatmap(U, Rowv=NA, Colv = NA)                               # this is how this U matrix looks like
 
-(f_val_max <- my_goal_function(perm_real))       # 1 --->>> 173.8; 2 --->>>  56.00;  3 --->>> -41.5995
-(f_val_id <- my_goal_function(permutations::id)) # 1 --->>> 79.5;  2 --->>> -108.26; 3 --->>> -194.46
+(f_val_max <- my_goal_function(perm_real))       # 0 --->>> -28.5; 1 --->>> 173.8; 2 --->>>  56.00;  3 --->>> -41.5995
+(f_val_id <- my_goal_function(permutations::id)) # 0 --->>> -45.8; 1 --->>> 79.5;  2 --->>> -108.26; 3 --->>> -194.46
 
 
 
@@ -105,6 +110,30 @@ set.seed(1234)
 #bg_start_random_list_mean <- make_BG_mean(bg_start_random_list) # Use this with caution!!! It is incredibly hard to interpret! Only part of the length of the line is sensible!
 
 
+
+
+###########################################################################################################################
+
+
+
+
+###################### experiment 0
+# check the correctness of the implementation
+
+set.seed(1234)
+my_init <- c("random", "random")
+eo_list_out_test <- get_list_of_lists_of_log_values(goal_function = my_goal_function, pop_size = 100,
+                                                    success_treshold = 0.025, a = 1,
+                                                    k_max = 5, tournament_part = 0.5, init = my_init,
+                                                    M = 20, max_iter = 1000, max_f_calls = 1000) # PC 6 minuts
+eo_list_test <- list() # combine lists
+for(my_list in eo_list_out_test[[1]]){
+  eo_list_test[[length(eo_list_test) + 1]] <- my_list
+}
+for(my_list in eo_list_out_test[[2]]){
+  eo_list_test[[length(eo_list_test) + 1]] <- my_list
+}
+#save(eo_list_test, file=paste0("data/experiment", perform_experiment, "/eo_list_test.Rdata")) # CAUTIOUSLY! Not to overwrite!
 
 
 

@@ -5,7 +5,7 @@ source("R/algorithm.R") # devtools::install_github("PrzeChoj/gips", ref = "91ce4
 
 set.seed(1234)
 
-perform_experiment <- "1" # "1" or "2" or "3"
+perform_experiment <- "1" # "0" or "1" or "2" or "3"
 
 n_number <- 20
 if(perform_experiment == "1"){
@@ -76,6 +76,17 @@ load(paste0("data/experiment", perform_experiment, "/mh_list1e5.Rdata"))       #
 load(paste0("data/experiment", perform_experiment, "/mc_list.Rdata"))
 load(paste0("data/experiment", perform_experiment, "/bg_start_id_list.Rdata"))
 
+
+
+
+#####################################################################################
+
+###################### experiment 0
+
+load(file=paste0("data/experiment", perform_experiment, "/eo_list_test.Rdata"))
+
+plot_ecdf_list_single(eo_list_test, experiment = perform_experiment)
+# implementation is correct, always found the best or near the best permutation in this small space
 
 
 
