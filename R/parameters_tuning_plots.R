@@ -94,10 +94,12 @@ eo_list_out_1_appended <- append_the_list(eo_list_out_1, list(mh_list1e4, mc_lis
 
 plot_ecdf_list(eo_list_out_1_appended, paste0("a = ", my_a), experiment = perform_experiment)
 # the best is a = 0.3
+par(mfrow = c(1,2))
+plot_ecdf_list_single(mh_list1e4[1:10], my_title = "ECDF plot: MH")
 plot_ecdf_list_single(eo_list_out_1[[2]],
                       my_title = paste0("ECDF plot: a = ",
                                         my_a[2]), experiment = perform_experiment)
-
+par(mfrow = c(1,1))
 
 
 

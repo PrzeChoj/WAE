@@ -10,7 +10,8 @@ source("R/utils.R")
 #' out <- evolutional_optimization(my_goal_function, max_iter=100, pop_size=15)
 #' out[["best_permutation"]]
 #' out[["best_f_value"]]
-#' out2 <- evolutional_optimization(my_goal_function, max_iter=100, pop_size=15, a=1)
+#' out2 <- evolutional_optimization(my_goal_function, max_iter=100, pop_size=15, a=0.1)
+#' out2[["best_f_value"]]
 evolutional_optimization <- function(my_goal_function, max_iter=100, pop_size=15,
                                      success_treshold=0.025, p_0=0.5,
                                      a=1, k_max=1,
