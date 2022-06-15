@@ -1,9 +1,9 @@
 library(magrittr)
-source("R/algorithm.R") # devtools::install_github("PrzeChoj/gips")
+source("R/algorithm.R") # devtools::install_github("PrzeChoj/gips", ref = "91ce43e068f")
 
 set.seed(1234)
 
-# sum time for experiment "1" --->>> 24 h; experiment 2 --->>> 17 h; all experiments --->>> 41 h
+# sum time for experiment "1" --->>> 24 h; experiment 2 --->>> 17 h; experiment 3 --->>> 10 h; all experiments --->>> 51 h
 perform_experiment <- "3" # "1" or "2" or "3"
 
 n_number <- 20
@@ -311,5 +311,4 @@ eo_list_out_long <- get_list_of_lists_of_log_values(goal_function = my_goal_func
 eo_list_random_close <- eo_list_out_long[[1]]
 eo_list_id_close <- eo_list_out_long[[2]]
 #save(eo_list_random_close, eo_list_id_close, file=paste0("data/experiment", perform_experiment, "/eo_list_init.Rdata")) # CAUTIOUSLY! Not to overwrite!
-#save(eo_list_out_long, file=paste0("data/experiment3/eo_back_up.Rdata")) # CAUTIOUSLY! Not to overwrite!
 
