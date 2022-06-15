@@ -5,10 +5,15 @@ source("R/algorithm.R") # devtools::install_github("PrzeChoj/gips", ref = "91ce4
 
 set.seed(1234)
 
-perform_experiment <- "1" # "0" or "1" or "2" or "3"
+perform_experiment <- "4" # "0" or "1" or "2" or "3" or "4"
 
 n_number <- 20
-if(perform_experiment == "1"){
+if(perform_experiment == "0"){
+  perm_size <- 6
+  sigma_matrix <- NULL
+  
+  perm_real <- as.cycle(1:perm_size)
+}else if(perform_experiment == "1"){
   perm_size <- 25
   sigma_matrix <- NULL
   
@@ -52,6 +57,12 @@ if(perform_experiment == "1"){
   }
   
   perm_real <- as.cycle(as.word(c(2:7, 1, 9:14, 8, 16:21, 15)))
+}else if(perform_experiment == "4"){
+  n_number <- 200
+  perm_size <- 100
+  sigma_matrix <- NULL
+  
+  perm_real <- as.cycle(1:perm_size)
 }else{
   stop("Wrong experiment selected!")
 }
@@ -59,15 +70,16 @@ if(perform_experiment == "1"){
 # check properties:
   # eigen(sigma_matrix)$values                                              # all positive; matrix is positive-defined; matrix can be used as CoV matrix
   # gips::project_matrix(sigma_matrix, perm_real, perm_size) - sigma_matrix # matrix of zeros; this matrix is invariant under perm_real
-  # heatmap(sigma_matrix, Rowv=NA, Colv = NA)                               # this is how this matrix looks like
+  # heatmap(sigma_matrix, Rowv = NA, Colv = NA)                             # this is how this matrix looks like
 
 # prod(1:perm_size) / 100 / 60 / 60  # liczba godzin potrzebnych do przejrzenia calej dziedziny
 
 my_goal_function <- goal_function_maker(perm_size, n_number, sigma = sigma_matrix)
 U <- attr(my_goal_function, "U")
+# heatmap(U, Rowv = NA, Colv = NA)                               # this is esitimated matrix looks like
 
-(f_val_max <- my_goal_function(perm_real))       # 1 --->>> 173.8; 2 --->>> 56.00;   3 --->>> -41.5995
-(f_val_id <- my_goal_function(permutations::id)) # 1 --->>> 79.5;  2 --->>> -108.26; 3 --->>> -194.46
+(f_val_max <- my_goal_function(perm_real))       # 0 --->>> -28.5; 1 --->>> 173.8; 2 --->>>  56.00;  3 --->>> -41.5995; 4 --->>> 24159
+(f_val_id <- my_goal_function(permutations::id)) # 0 --->>> -45.8; 1 --->>> 79.5;  2 --->>> -108.26; 3 --->>> -194.46;  4 --->>> 22512
 
 
 # Reference algorithms:

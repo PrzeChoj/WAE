@@ -198,6 +198,10 @@ plot_ecdf_list <- function(list_of_lists_f_vals, legent_additional_text = "", ex
     f_val_max <- -21.59946 # my_goal_function(perm_real)
     f_val_id <- -194.468   # my_goal_function(permutations::id)
     f_val_med <- -238.6469 # median(mc_list[[1]])
+  }else if(experiment == "4"){
+    f_val_max <- 24159 # my_goal_function(perm_real)
+    f_val_id <- 22512  # my_goal_function(permutations::id)
+    f_val_med <- 20500 # median(mc_list[[1]])
   }else{
     stop("Wrong experiment selected!")
   }

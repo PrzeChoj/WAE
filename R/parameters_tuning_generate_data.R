@@ -4,7 +4,7 @@ source("R/algorithm.R") # devtools::install_github("PrzeChoj/gips", ref = "91ce4
 set.seed(1234)
 
 # sum time for experiment "1" --->>> 24 h; experiment 2 --->>> 17 h; experiment 3 --->>> 10 h; all experiments --->>> 51 h
-perform_experiment <- "0" # "0", "1" or "2" or "3"
+perform_experiment <- "4" # "0", "1" or "2" or "3" or "4"
 
 n_number <- 20
 if(perform_experiment == "0"){
@@ -56,6 +56,12 @@ if(perform_experiment == "0"){
   }
   
   perm_real <- as.cycle(as.word(c(2:7, 1, 9:14, 8, 16:21, 15)))
+}else if(perform_experiment == "4"){
+  n_number <- 200
+  perm_size <- 100
+  sigma_matrix <- NULL
+  
+  perm_real <- as.cycle(1:perm_size)
 }else{
   stop("Wrong experiment selected!")
 }
@@ -71,10 +77,13 @@ my_goal_function <- goal_function_maker(perm_size, n_number, sigma = sigma_matri
 U <- attr(my_goal_function, "U")
 # heatmap(U, Rowv=NA, Colv = NA)                               # this is how this U matrix looks like
 
-(f_val_max <- my_goal_function(perm_real))       # 0 --->>> -28.5; 1 --->>> 173.8; 2 --->>>  56.00;  3 --->>> -41.5995
-(f_val_id <- my_goal_function(permutations::id)) # 0 --->>> -45.8; 1 --->>> 79.5;  2 --->>> -108.26; 3 --->>> -194.46
+(f_val_max <- my_goal_function(perm_real))       # 0 --->>> -28.5; 1 --->>> 173.8; 2 --->>>  56.00;  3 --->>> -41.5995; 4 --->>> 24159
+(f_val_id <- my_goal_function(permutations::id)) # 0 --->>> -45.8; 1 --->>> 79.5;  2 --->>> -108.26; 3 --->>> -194.46;  4 --->>> 22512
 
 
+
+
+################### For experiments 1, 2 and 3:
 
 # MH for reference
 mh_list1e4 <- get_list_of_log_values_MH(my_goal_function, max_iter = 10000, M = 100) # PC 2 h
@@ -340,4 +349,20 @@ eo_list_out_long <- get_list_of_lists_of_log_values(goal_function = my_goal_func
 eo_list_random_close <- eo_list_out_long[[1]]
 eo_list_id_close <- eo_list_out_long[[2]]
 #save(eo_list_random_close, eo_list_id_close, file=paste0("data/experiment", perform_experiment, "/eo_list_init.Rdata")) # CAUTIOUSLY! Not to overwrite!
+
+
+########################################################################################################################
+
+
+###################### experiment 4
+
+# MH for reference
+set.seed(1234)
+time_start <- Sys.time()
+mh <- gips::MH(U = U, n_number = n, max_iter = 1000) # PC 1000 --->>> 4 minutes; 100 000 --->>> 7? h
+time_end <- Sys.time()
+print(time_end - time_start)
+mh_values <- mh[["goal_function_logvalues"]]
+#save(mh_values, file=paste0("data/experiment", perform_experiment, "/mh.Rdata")) # CAUTIOUSLY! Not to overwrite!
+
 
