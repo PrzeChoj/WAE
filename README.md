@@ -21,7 +21,7 @@ Projekt zakończył się pełnym sukcesem. Znaleziono konfigurację EO dającą 
 Wszystkie wyniki są oparte o reprodukowalny skrypt generujący dane, znajdujący się w pliku `R/parameters_tuning_generate_data.R`. Skrypt ten generuje dane, które są następnie zapisywane w folderze `data`. Dane te są wykorzystywane przez skrypt `R/parameters_tuning_plots.R` do tworzenia wykresów i do przeprowadzania testów statystycznych.
 
 ## Szczegóły techniczne
-Projekt wykonany jest w języku programowania `R`. Wykorzystano pakiet `gips` dostępnym na stronie [GitHub](https://github.com/PrzeChoj/gips). Skrypty są reprodukowalne na commicie pakietu `gips` o id `91ce43e068f`.
+Projekt wykonany jest w języku programowania `R`. Wykorzystano pakiet `gips` dostępnym na stronie [GitHub](https://github.com/PrzeChoj/gips). Skrypty są reprodukowalne na commicie pakietu `gips` o id `91ce43e068f`. Zainstalować więc można pakiet `gips` za pomocą zaklęcia: `devtools::install_github("PrzeChoj/gips", ref = "91ce43e068f")`.
 
 Algorytm BG wytworzony w ramach tego projektu został później dołączony jako część pakietu `gips`, a algorytm MC będzie dołączony w przyszłości.
 
@@ -31,6 +31,7 @@ W pracy zidentyfikowano kilka potencjalnych ścieżek rozwoju:
 2. Porównanie EO z algorytmem symulowanego wyżarzania.
 3. Rozszerzenie EO o mechanizm krzyżowania.
 4. Analiza przykładowego praktycznego przypadku użycia, np. do klasyfikacji modelem QDA.
+5. Zastanowić się nad innym rodzajem mutacji, np. w oparciu o cykle, a nie dowolne permutacje.
 
 
 

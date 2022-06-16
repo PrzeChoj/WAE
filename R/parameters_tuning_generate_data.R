@@ -371,25 +371,25 @@ mh_values <- mh[["goal_function_logvalues"]]
 # EO
 set.seed(1234)
 time_start <- Sys.time()
-eo <- evolutional_optimization(my_goal_function = my_goal_function, pop_size = 100,
-                               success_treshold = 0.031, a = 0.3,
-                               k_max = 7, tournament_part = 0.5, init = "id_close",
-                               max_iter = 1000, max_f_calls = 100000) # PC 2h 10 min
+eo1 <- evolutional_optimization(my_goal_function = my_goal_function, pop_size = 100,
+                                success_treshold = 0.031, a = 0.3,
+                                k_max = 7, tournament_part = 0.5, init = "id_close",
+                                max_iter = 1000, max_f_calls = 100000) # PC 2h 10 min
 time_end <- Sys.time()
 print(time_end - time_start)
-#save(eo, file=paste0("data/experiment", perform_experiment, "/eo_full_1.Rdata")) # CAUTIOUSLY! Not to overwrite!
+#save(eo1, file=paste0("data/experiment", perform_experiment, "/eo_full_1.Rdata")) # CAUTIOUSLY! Not to overwrite!
 
-# chuja działa. Wygląda na minimalizacje, a nie maxymalizacje
+# slabo działa. Wygląda na minimalizacje, a nie maksymalizacje
 
 set.seed(1234)
 time_start <- Sys.time()
-eo <- evolutional_optimization(my_goal_function = my_goal_function, pop_size = 100,
-                               success_treshold = 0.031, a = 0.3,
-                               k_max = 7, tournament_part = 0.5, init = "random_close",
-                               max_iter = 1000, max_f_calls = 100000) # PC 1h 30 min
+eo2 <- evolutional_optimization(my_goal_function = my_goal_function, pop_size = 100,
+                                success_treshold = 0.031, a = 0.3,
+                                k_max = 7, tournament_part = 0.5, init = "random_close",
+                                max_iter = 1000, max_f_calls = 100000) # PC 1h 30 min
 time_end <- Sys.time()
 print(time_end - time_start)
-#save(eo, file=paste0("data/experiment", perform_experiment, "/eo_full_2.Rdata")) # CAUTIOUSLY! Not to overwrite!
+#save(eo2, file=paste0("data/experiment", perform_experiment, "/eo_full_2.Rdata")) # CAUTIOUSLY! Not to overwrite!
 
 
 
