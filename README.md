@@ -18,7 +18,7 @@ Algorytm ewolucyjny porównano z powszechnie używanym do tego celu algorytmem M
 Projekt zakończył się pełnym sukcesem. Znaleziono konfigurację EO dającą znaczące lepsze rezultaty niż MH. Więcej informacji o szczegółach można przeczytać w raporcie TODO().
 
 ## Reprodukcja wyników i wykresów
-Wszystkie wyniki są oparte o reprodukowalny skrypt generujący dane, znajdujący się w pliku `R/parameters_tuning_generate_data.R`. Skrypt ten generuje dane, które są następnie zapisywane w folderze `data`. Dane te są wykorzystywane przez skrypt `R/parameters_tuning_plots.R` do tworzenia wykresów i do przeprowadzania testów statystycznych.
+Wszystkie wyniki są oparte o reprodukowalny skrypt generujący dane, znajdujący się w pliku `R/parameters_tuning_generate_data.R`. Skrypt ten generuje dane, które są następnie zapisywane w folderze `data`. Dane te są wykorzystywane przez skrypt `R/parameters_tuning_plots.R` do tworzenia wykresów i do przeprowadzania testów statystycznych. Wykresy są zapisywane w folderze `plots`.
 
 ## Szczegóły techniczne
 Projekt wykonany jest w języku programowania `R`. Wykorzystano pakiet `gips` dostępnym na stronie [GitHub](https://github.com/PrzeChoj/gips). Skrypty są reprodukowalne na commicie pakietu `gips` o id `91ce43e068f`. Zainstalować więc można pakiet `gips` za pomocą zaklęcia: `devtools::install_github("PrzeChoj/gips", ref = "91ce43e068f")`.

@@ -81,14 +81,14 @@ trim_values <- function(values, min_val=NULL, max_val=NULL, make_cumsum=TRUE){
 #' @param min_val value that will be considered 0
 #' @param max_val value that will be considered 1
 #' @param ECDF when TRUE, plots ECDF; when FALSE, plots the values of an algorithm in the iteration
-plot_ecdf <- function(values_list, min_val, max_val, xlog = TRUE,
+plot_ecdf <- function(values_list, min_val, max_val, xlog = TRUE, lines_transparency=1,
                       line_colours = "rainbow", max_y_scale = 1, ECDF = TRUE,
-                      show_legend = TRUE, legend_text = NULL, legend_cex=1,
+                      show_legend = TRUE, legend_text = NULL, legend_cex=1, text_cex=1,
                       reference_line = NULL, my_title = "ECDF plot",
                       my_xlab = NULL, my_ylab = NULL, my_sub = NULL){
   stopifnot(max_y_scale > 0, max_y_scale <= 1)
   
-  if(!ECDF){
+  if(!ECDF & my_title == "ECDF plot"){
     my_title <- "plot of values of alg in the iteration"
   }
   
@@ -100,6 +100,9 @@ plot_ecdf <- function(values_list, min_val, max_val, xlog = TRUE,
   
   if((length(line_colours) == 1) && (line_colours == "rainbow")){
     line_colours <- rainbow(num_of_algorithms)
+  }
+  if(length(line_colours) == 1){
+    line_colours <- rep(line_colours, num_of_algorithms)
   }
   stopifnot(length(line_colours) == num_of_algorithms)
   
@@ -139,8 +142,8 @@ plot_ecdf <- function(values_list, min_val, max_val, xlog = TRUE,
                  avrage_for_ith_algorithm[length(avrage_for_ith_algorithm)])
     
     if(ECDF){
-      graphics::lines.default(x_cords, y_cords,
-                              type = "l", col = line_colours[i],
+      graphics::lines.default(x_cords, y_cords, type = "l",
+                              col = scales::alpha(line_colours[i], lines_transparency),
                               lwd=4)
     }else{
       graphics::points(x_cords, y_cords, col=line_colours[i],
@@ -167,7 +170,10 @@ plot_ecdf <- function(values_list, min_val, max_val, xlog = TRUE,
     sub <- "for different algorithms"
   }
   graphics::title(main = my_title, sub = sub,
-                  xlab = xlab, ylab = ylab)
+                  xlab = xlab, ylab = ylab,
+                  cex.sub = text_cex,
+                  cex.main = text_cex,
+                  cex.lab = text_cex)
   graphics::axis(1)
   graphics::axis(2)
   graphics::box()
