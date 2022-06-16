@@ -82,7 +82,7 @@ U <- attr(my_goal_function, "U")
 (f_val_id <- my_goal_function(permutations::id)) # 0 --->>> -45.8; 1 --->>> 79.5;  2 --->>> -108.26; 3 --->>> -194.46;  4 --->>> 22512
 
 
-# Reference algorithms:
+# Reference algorithms (for experiments 1, 2, 3):
 load(paste0("data/experiment", perform_experiment, "/mh_list1e4.Rdata"))
 load(paste0("data/experiment", perform_experiment, "/mh_list1e5.Rdata"))       # non existing for experiment 3
 load(paste0("data/experiment", perform_experiment, "/mc_list.Rdata"))
@@ -466,6 +466,7 @@ t.test(1:200 %>% sapply(function(i){max(eo_list_random_close[[i]])}),
 
 
 
+
 ##############################################################################################################################
 
 
@@ -474,8 +475,17 @@ t.test(1:200 %>% sapply(function(i){max(eo_list_random_close[[i]])}),
 ###################### experiment 4
 
 
+load(paste0("data/experiment", perform_experiment, "/mh_full.Rdata"))
+load(paste0("data/experiment", perform_experiment, "/eo_full_1.Rdata"))
+load(paste0("data/experiment", perform_experiment, "/eo_full_2.Rdata"))
 
-#TODO()
+
+plot_ecdf(list(list(mh$goal_function_logvalues),
+               list(eo1$goal_function_logvalues),
+               list(eo2$goal_function_logvalues)),
+          legend_text = c("MH", "EO id close", "EO random close"),
+          legend_cex = 0.62, ECDF = FALSE,
+          min_val = 3504, max_val = 24159, reference_line = 22512)
 
 
 

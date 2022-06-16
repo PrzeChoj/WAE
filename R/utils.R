@@ -62,13 +62,17 @@ runif_transposition <- function(perm_size){
 
 #' Trim values to 0-1 range
 #' 
-trim_values <- function(values, min_val=NULL, max_val=NULL){
+trim_values <- function(values, min_val=NULL, max_val=NULL, make_cumsum=TRUE){
   if(is.null(min_val))
     min_val = min(values)
   if(is.null(max_val))
     max_val = max(values)
   
-  pmin(1, pmax(0, (cummax(values) - min_val) / (max_val - min_val)))
+  if(make_cumsum){
+    values <- cummax(values)
+  }
+  
+  pmin(1, pmax(0, (values - min_val) / (max_val - min_val)))
 }
 
 #' Plot ECDF for multiple sets of values
@@ -76,12 +80,17 @@ trim_values <- function(values, min_val=NULL, max_val=NULL){
 #' @param values_list list of lists of values of goal_function that were found in the iteration; for a optimization method has to be the same length
 #' @param min_val value that will be considered 0
 #' @param max_val value that will be considered 1
+#' @param ECDF when TRUE, plots ECDF; when FALSE, plots the values of an algorithm in the iteration
 plot_ecdf <- function(values_list, min_val, max_val, xlog = TRUE,
-                      line_colours = "rainbow", max_y_scale = 1,
+                      line_colours = "rainbow", max_y_scale = 1, ECDF = TRUE,
                       show_legend = TRUE, legend_text = NULL, legend_cex=1,
                       reference_line = NULL, my_title = "ECDF plot",
                       my_xlab = NULL, my_ylab = NULL, my_sub = NULL){
   stopifnot(max_y_scale > 0, max_y_scale <= 1)
+  
+  if(!ECDF){
+    my_title <- "plot of values of alg in the iteration"
+  }
   
   num_of_algorithms <- length(values_list)
   num_of_tries <- sapply(values_list, length)
@@ -110,8 +119,12 @@ plot_ecdf <- function(values_list, min_val, max_val, xlog = TRUE,
   for(i in 1:num_of_algorithms){
     avrage_for_ith_algorithm <- numeric(num_of_iters[i])
     for(j in 1:num_of_tries[i]){
-      trimed_values <- trim_values(values_list[[i]][[j]], min_val, max_val)
-      avrage_for_ith_algorithm <- avrage_for_ith_algorithm + cummax(trimed_values)
+      if(ECDF){
+        trimed_values <- trim_values(values_list[[i]][[j]], min_val, max_val, make_cumsum = TRUE)
+      }else{
+        trimed_values <- trim_values(values_list[[i]][[j]], min_val, max_val, make_cumsum = FALSE)
+      }
+      avrage_for_ith_algorithm <- avrage_for_ith_algorithm + trimed_values  # trimed_values are already `cumsum()`ed (when ECDF == TRUE)
     }
     avrage_for_ith_algorithm <- avrage_for_ith_algorithm / num_of_tries[i]
     
@@ -125,9 +138,14 @@ plot_ecdf <- function(values_list, min_val, max_val, xlog = TRUE,
     y_cords <- c(rep(avrage_for_ith_algorithm[1:(length(avrage_for_ith_algorithm)-1)], each=2),
                  avrage_for_ith_algorithm[length(avrage_for_ith_algorithm)])
     
-    graphics::lines.default(x_cords, y_cords,
-                            type = "l", col = line_colours[i],
-                            lwd=4)
+    if(ECDF){
+      graphics::lines.default(x_cords, y_cords,
+                              type = "l", col = line_colours[i],
+                              lwd=4)
+    }else{
+      graphics::points(x_cords, y_cords, col=line_colours[i],
+                       pch=16, cex=0.4)
+    }
   }
   
   if(xlog){
@@ -201,7 +219,7 @@ plot_ecdf_list <- function(list_of_lists_f_vals, legent_additional_text = "", ex
   }else if(experiment == "4"){
     f_val_max <- 24159 # my_goal_function(perm_real)
     f_val_id <- 22512  # my_goal_function(permutations::id)
-    f_val_med <- 20500 # median(mc_list[[1]])
+    f_val_med <- 3504  # median(eo2$goal_function_logvalues[1:100])
   }else{
     stop("Wrong experiment selected!")
   }
