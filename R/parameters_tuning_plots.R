@@ -2,7 +2,7 @@ library(magrittr)
 source("R/algorithm.R") # devtools::install_github("PrzeChoj/gips", ref = "91ce43e068f")
 
 set.seed(1234)
-perform_experiment <- "1" # "0" or "1" or "2" or "3" or "4"
+perform_experiment <- "3" # "0" or "1" or "2" or "3" or "4"
 
 n_number <- 20
 if(perform_experiment == "0"){
@@ -64,10 +64,16 @@ if(perform_experiment == "0"){
   stop("Wrong experiment selected!")
 }
 
+if(is.null(sigma_matrix)){
+  sigma_matrix <- sigma_maker(perm_size)
+}
+
 # check properties:
-  # eigen(sigma_matrix)$values                                              # all positive; matrix is positive-defined; matrix can be used as CoV matrix
-  # gips::project_matrix(sigma_matrix, perm_real, perm_size) - sigma_matrix # matrix of zeros; this matrix is invariant under perm_real
-  # heatmap(sigma_matrix, Rowv = NA, Colv = NA)                             # this is how this matrix looks like
+  # eigen(sigma_matrix)$values                                                          # all positive; matrix is positive-defined; matrix can be used as CoV matrix
+  # all((gips::project_matrix(sigma_matrix, perm_real, perm_size) - sigma_matrix) == 0) # this is TRUE; this matrix is invariant under perm_real
+  # jpeg(paste0("plots/sigma_matrix", perform_experiment, ".jpeg"), width=600, height=600)
+  # heatmap(sigma_matrix, Rowv = NA, Colv = NA)                                         # this is how this matrix looks like
+  # dev.off()
 
 # prod(1:perm_size) / 100 / 60 / 60  # liczba godzin potrzebnych do przejrzenia calej dziedziny
 
@@ -655,7 +661,12 @@ t.test(1:100 %>% sapply(function(i){max(mh_list1e4[[i]])}),
 t.test(1:200 %>% sapply(function(i){max(eo_list_random_close[[i]])}),
        1:200 %>% sapply(function(i){max(eo_list_id_close[[i]])})) # p-val = 0.5607, so no conclusions can be made on the betterness
 
-
+wilcox.test(1:100 %>% sapply(function(i){max(mh_list1e4[[i]])}),
+            1:200 %>% sapply(function(i){max(eo_list_random_close[[i]])})) # p-val < 2.2 * 10 ^ (-16), so definitely EO is better
+wilcox.test(1:100 %>% sapply(function(i){max(mh_list1e4[[i]])}),
+            1:200 %>% sapply(function(i){max(eo_list_id_close[[i]])})) # p-val < 2.2 * 10 ^ (-16), so definitely EO is better
+wilcox.test(1:200 %>% sapply(function(i){max(eo_list_random_close[[i]])}),
+            1:200 %>% sapply(function(i){max(eo_list_id_close[[i]])})) # p-val = 0.7503, so no conclusions can be made on the betterness
 
 
 ##############################################################################################################################
